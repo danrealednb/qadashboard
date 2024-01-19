@@ -34,7 +34,7 @@ export default function Breakdowns() {
         Test Type Breakdown
       </h1>
 
-      <div className="grid grid-cols-3 py-10">
+      <div className="grid grid-cols-3 py-10 border-2 border-t-8">
         <CountVisual chartName="Total Tests" count={automatedTests.count} />
         <CountPercentageVisual
           chartName="Automated Tests"
@@ -49,7 +49,7 @@ export default function Breakdowns() {
           page="/manualtests"
         />
       </div>
-      <div className="grid grid-cols-4 py-10">
+      <div className="grid grid-cols-4 py-10 border-2">
         <CountPercentageVisual
           chartName="Accessibility Tests"
           count={accessibilityTests.count}
@@ -76,7 +76,7 @@ export default function Breakdowns() {
         />
       </div>
 
-      <div className="grid grid-cols-4 py-10">
+      <div className="grid grid-cols-4 py-10 border-2">
         <CountPercentageVisual
           chartName="Integration Tests"
           count={integrationTests.count}
@@ -103,7 +103,7 @@ export default function Breakdowns() {
         />
       </div>
 
-      <div className="grid grid-cols-4 py-10">
+      <div className="grid grid-cols-4 py-10 border-2 border-b-8">
         <CountPercentageVisual
           chartName="Security Tests"
           count={securityTests.count}
