@@ -1,11 +1,19 @@
 import { json, type MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import CountVisualWithLink from "~/components/ChartVisualWithLink";
 import CountPercentageVisual from "~/components/CountPercentageVisual";
+import CountVisual from "~/components/CountVisual";
 import Header from "~/components/Header";
 import PercentageVisual from "~/components/PercentageVisual";
 
 import StarbasePieChart from "~/components/StarbasePieChart";
 import BasicTooltip from "~/components/Tooltip";
+import {
+  getJiraBugs30Days,
+  getJiraBugs30DaysDev,
+  getJiraBugs30DaysProd,
+  getJiraData,
+} from "~/data/jira.server";
 import {
   getAllTestCases,
   getAutomatedTests,
@@ -27,10 +35,9 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   const {
     testRuns,
-    manualTests,
-    manualTestPercentage,
-    automatedTests,
-    automatedTestPercentage,
+    jiraDefects30Days,
+    jiraDefects30DaysProd,
+    jiraDefects30DaysDev,
   } = useLoaderData<typeof loader>();
 
   return (
@@ -70,23 +77,21 @@ export default function Index() {
           tooltip="Number of defects found divided by number of test cases executed"
         />
       </div>
-      <div className="grid grid-cols-4 py-10">
-        <PercentageVisual
-          chartName="Defect Leakage"
-          percentage="3"
-          tooltip="Number of defects found in production by end users"
+      <div className="grid grid-cols-3 py-20">
+        <CountVisualWithLink
+          chartName="Defects (30 Days)"
+          count={jiraDefects30Days.totalJiraIssues}
+          page="/defects30all"
         />
-        <CountPercentageVisual
-          chartName="Automated Tests"
-          count={automatedTests.length}
-          percentage={automatedTestPercentage}
-          page="/automatedtests"
+        <CountVisualWithLink
+          chartName="Defects Prod (30 Days) (Defect Leakage)"
+          count={jiraDefects30DaysProd.totalJiraIssues}
+          page="/defects30prod"
         />
-        <CountPercentageVisual
-          chartName="Manual Tests"
-          count={manualTests.length}
-          percentage={manualTestPercentage}
-          page="/manualtests"
+        <CountVisualWithLink
+          chartName="Defects Dev (30 Days)"
+          count={jiraDefects30DaysDev.totalJiraIssues}
+          page="/defects30dev"
         />
       </div>
       {/* <div>
@@ -136,24 +141,14 @@ export async function loader() {
   // }
   // const testCaseData = await getAllTestCases();
 
-  const testCaseData = await getTestCasesFromTestRail(0);
-  const totalTestCases = testCaseData.length;
-  const manualTests = getManualTests(testCaseData);
-  const automatedTests = getAutomatedTests(testCaseData);
-  const automatedTestPercentage = getPercentage(
-    automatedTests.length,
-    totalTestCases
-  );
-  const manualTestPercentage = getPercentage(
-    manualTests.length,
-    totalTestCases
-  );
+  const jiraDefects30Days = await getJiraBugs30Days();
+  const jiraDefects30DaysProd = await getJiraBugs30DaysProd();
+  const jiraDefects30DaysDev = await getJiraBugs30DaysDev();
 
   return {
     testRuns,
-    manualTests,
-    manualTestPercentage,
-    automatedTests,
-    automatedTestPercentage,
+    jiraDefects30Days,
+    jiraDefects30DaysProd,
+    jiraDefects30DaysDev,
   };
 }
