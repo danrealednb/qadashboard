@@ -69,6 +69,36 @@ export interface TEST_CASE {
   custom_test_case_type: Array<number> | undefined | null;
 }
 
+// let offsetAmount = 0;
+// const allTestData: any = [];
+// export async function dan() {
+//   const allTestData: any = [];
+//   await getTestCasesFromTestRail(0);
+// }
+export async function getTestCasesFromTestRail(offset: number = 0) {
+  const allTestData: any = [];
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/1&suite_id=1&offset=${offset}`,
+    { headers }
+  );
+  const data = await res.json();
+  const fullTestCaseData = data.cases;
+  if (data.size < 250) {
+    // don't need to do anything else, just return the data
+    allTestData.push(...fullTestCaseData);
+    return allTestData;
+  } else {
+    // need to get more data
+    const offsetTestData = await getTestCasesFromTestRail(offset + 250);
+    allTestData.push(...fullTestCaseData);
+    allTestData.push(...offsetTestData);
+    return allTestData;
+  }
+}
+
 export async function getAllTestCases() {
   const headers = {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,

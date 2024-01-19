@@ -12,6 +12,7 @@ import {
   getCurrentTestRuns,
   getManualTests,
   getPercentage,
+  getTestCasesFromTestRail,
   TEST_RUN_DATA,
   testRunChartData,
 } from "~/data/testrail.server";
@@ -133,7 +134,9 @@ export async function loader() {
   //   console.log(metricData);
   //   // testRunData.push(metricData)
   // }
-  const testCaseData = await getAllTestCases();
+  // const testCaseData = await getAllTestCases();
+
+  const testCaseData = await getTestCasesFromTestRail(0);
   const totalTestCases = testCaseData.length;
   const manualTests = getManualTests(testCaseData);
   const automatedTests = getAutomatedTests(testCaseData);

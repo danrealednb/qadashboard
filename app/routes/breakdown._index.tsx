@@ -7,11 +7,13 @@ import {
   getAutomatedTests,
   getManualTests,
   getPercentage,
+  getTestCasesFromTestRail,
   getTestTypeTests,
 } from "~/data/testrail.server";
 
 export default function Breakdowns() {
   const {
+    totalTestCases,
     automatedTests,
     manualTests,
     accessibilityTests,
@@ -35,7 +37,7 @@ export default function Breakdowns() {
       </h1>
 
       <div className="grid grid-cols-3 py-10 border-2 border-t-8">
-        <CountVisual chartName="Total Tests" count={automatedTests.count} />
+        <CountVisual chartName="Total Tests" count={totalTestCases} />
         <CountPercentageVisual
           chartName="Automated Tests"
           count={automatedTests.count}
@@ -134,8 +136,9 @@ export default function Breakdowns() {
 }
 
 export async function loader() {
-  const testCaseData = await getAllTestCases();
-  //   console.log(testCaseData);
+  // const testCaseData = await getAllTestCases();
+  const testCaseData = await getTestCasesFromTestRail(0);
+
   const totalTestCases = testCaseData.length;
 
   const automatedTests = getAutomatedTests(testCaseData);
@@ -202,13 +205,14 @@ export async function loader() {
   const unitTests = getTestTypeTests(testCaseData, 11);
   const unitTestPercentage = getPercentage(unitTests.length, totalTestCases);
 
-  const nonFunctionalTests = getTestTypeTests(testCaseData, 13);
+  const nonFunctionalTests = getTestTypeTests(testCaseData, 12);
   const nonFunctionalTestPercentage = getPercentage(
     nonFunctionalTests.length,
     totalTestCases
   );
 
   return {
+    totalTestCases,
     automatedTests: {
       data: automatedTests,
       count: automatedTests.length,

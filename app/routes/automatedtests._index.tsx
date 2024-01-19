@@ -1,7 +1,11 @@
 import { useLoaderData } from "@remix-run/react";
 import Header from "~/components/Header";
 import TestList from "~/components/TestList";
-import { getAllTestCases, getAutomatedTests } from "~/data/testrail.server";
+import {
+  getAllTestCases,
+  getAutomatedTests,
+  getTestCasesFromTestRail,
+} from "~/data/testrail.server";
 
 export default function AutomatedTests() {
   const { automatedTests } = useLoaderData<typeof loader>();
@@ -18,8 +22,10 @@ export default function AutomatedTests() {
 }
 
 export async function loader() {
-  const testCaseData = await getAllTestCases();
+  // const testCaseData = await getAllTestCases();
   //   console.log(testCaseData);
+
+  const testCaseData = await getTestCasesFromTestRail(0);
 
   const automatedTests = getAutomatedTests(testCaseData);
   //   console.log(automatedTests);

@@ -94,6 +94,7 @@ export default function TestList({
                     {getTestTypesToStr(test.custom_test_case_type)}
                   </td>
                 )}
+                {!test.custom_test_case_type && <td className="px-2 py-1"></td>}
               </tr>
             ))}
           </tbody>

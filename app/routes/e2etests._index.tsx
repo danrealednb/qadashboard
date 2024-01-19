@@ -1,7 +1,11 @@
 import { useLoaderData } from "@remix-run/react";
 import Header from "~/components/Header";
 import TestList from "~/components/TestList";
-import { getAllTestCases, getTestTypeTests } from "~/data/testrail.server";
+import {
+  getAllTestCases,
+  getTestCasesFromTestRail,
+  getTestTypeTests,
+} from "~/data/testrail.server";
 
 export default function Tests() {
   const { testData } = useLoaderData<typeof loader>();
@@ -18,8 +22,10 @@ export default function Tests() {
 }
 
 export async function loader() {
-  const testCaseData = await getAllTestCases();
+  // const testCaseData = await getAllTestCases();
   //   console.log(testCaseData);
+
+  const testCaseData = await getTestCasesFromTestRail(0);
 
   const testData = getTestTypeTests(testCaseData, 3);
 
