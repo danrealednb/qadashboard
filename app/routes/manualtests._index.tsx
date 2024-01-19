@@ -8,7 +8,10 @@ export default function ManualTests() {
   return (
     <>
       <Header />
-      <h1 className="text-center text-2xl">Manual Tests</h1>
+      <h1 className="text-center text-2xl py-5 underline">Manual Tests</h1>
+      <h2 className="text-center text-2xl pb-5 text-blue-500">
+        {manualTests.length}
+      </h2>
       <TestList testCases={manualTests} />
     </>
   );

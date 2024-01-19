@@ -8,7 +8,10 @@ export default function AutomatedTests() {
   return (
     <>
       <Header />
-      <h1 className="text-center text-2xl">Automated Tests</h1>
+      <h1 className="text-center text-2xl py-5 underline">Automated Tests</h1>
+      <h2 className="text-center text-2xl pb-5 text-blue-500">
+        {automatedTests.length}
+      </h2>
       <TestList testCases={automatedTests} />
     </>
   );

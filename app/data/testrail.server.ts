@@ -107,47 +107,56 @@ export const getManualTests = (testCases: Array<TEST_CASE>) => {
   );
 };
 
+export const getTestTypeTests = (
+  testCases: Array<TEST_CASE>,
+  testType: number
+) => {
+  return testCases.filter((test: TEST_CASE) =>
+    test.custom_test_case_type?.includes(testType)
+  );
+};
+
 export const getPercentage = (metric: number, totalTestCases: number) => {
   const percentage = ((metric / totalTestCases) * 100).toFixed(2);
   return percentage.toString();
 };
 
-export const getTestTypesToStr = (testTypes: Array<number>) => {
-  const mappedTypes = testTypes
-    .map((test: number) => testTypeMapping(test))
-    .join(",");
-  return mappedTypes;
-};
+// export const getTestTypesToStr = (testTypes: Array<number>) => {
+//   const mappedTypes = testTypes
+//     .map((test: number) => testTypeMapping(test))
+//     .join(",");
+//   return mappedTypes;
+// };
 
-const testTypeMapping = (testType: number) => {
-  switch (testType) {
-    case 1:
-      return "Accessibility";
-    case 2:
-      return "Data Validation";
-    case 3:
-      return "E2E";
-    case 4:
-      return "Functional";
-    case 5:
-      return "Integration";
-    case 6:
-      return "Performance";
-    case 7:
-      return "Load";
-    case 8:
-      return "Regression";
-    case 9:
-      return "Security";
-    case 10:
-      return "Smoke";
-    case 11:
-      return "Unit";
-    case 12:
-      return "Other";
-    case 13:
-      return "Non-Functional";
-    default:
-      return "NA";
-  }
-};
+// const testTypeMapping = (testType: number) => {
+//   switch (testType) {
+//     case 1:
+//       return "Accessibility";
+//     case 2:
+//       return "Data Validation";
+//     case 3:
+//       return "E2E";
+//     case 4:
+//       return "Functional";
+//     case 5:
+//       return "Integration";
+//     case 6:
+//       return "Performance";
+//     case 7:
+//       return "Load";
+//     case 8:
+//       return "Regression";
+//     case 9:
+//       return "Security";
+//     case 10:
+//       return "Smoke";
+//     case 11:
+//       return "Unit";
+//     case 12:
+//       return "Other";
+//     case 13:
+//       return "Non-Functional";
+//     default:
+//       return "NA";
+//   }
+// };
