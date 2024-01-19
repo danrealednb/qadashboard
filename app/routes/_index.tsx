@@ -1,7 +1,20 @@
 import { json, type MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import CountPercentageVisual from "~/components/CountPercentageVisual";
+import Header from "~/components/Header";
+import PercentageVisual from "~/components/PercentageVisual";
 
 import StarbasePieChart from "~/components/StarbasePieChart";
+import BasicTooltip from "~/components/Tooltip";
+import {
+  getAllTestCases,
+  getAutomatedTests,
+  getCurrentTestRuns,
+  getManualTests,
+  getPercentage,
+  TEST_RUN_DATA,
+  testRunChartData,
+} from "~/data/testrail.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -11,39 +24,71 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  const testRailData = useLoaderData<typeof loader>();
+  const {
+    testRuns,
+    manualTests,
+    manualTestPercentage,
+    automatedTests,
+    automatedTestPercentage,
+  } = useLoaderData<typeof loader>();
+
   return (
     <>
-      <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-        <h1>Welcome to Remix</h1>
-        <ul>
-          <li>
-            <a
-              target="_blank"
-              href="https://remix.run/tutorials/blog"
-              rel="noreferrer"
-            >
-              15m Quickstart Blog Tutorial
-            </a>
-          </li>
-          <li>
-            <a
-              target="_blank"
-              href="https://remix.run/tutorials/jokes"
-              rel="noreferrer"
-            >
-              Deep Dive Jokes App Tutorial
-            </a>
-          </li>
-          <li>
-            <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-              Remix Docs
-            </a>
-          </li>
-        </ul>
+      <Header />
+      <div className="grid grid-cols-4">
+        {testRuns.map((run: TEST_RUN_DATA) => (
+          <StarbasePieChart
+            chartName={run.name!!}
+            passed={run.passed}
+            failed={run.failed}
+            blocked={run.blocked}
+            retest={run.retest}
+            untested={run.untested}
+          />
+        ))}
       </div>
-      <StarbasePieChart />
-      <div>
+      <div className="grid grid-cols-4">
+        <PercentageVisual
+          chartName="Test Coverage"
+          percentage="12.54"
+          tooltip="Test cases for Jira tickets"
+        />
+        <PercentageVisual
+          chartName="Defect Density"
+          percentage="12.54"
+          tooltip="Number of defects divided by number of stories"
+        />
+        <PercentageVisual
+          chartName="Defect Resolution Time"
+          percentage="12.54"
+          tooltip="Defect closure date minus defect creation date"
+        />
+        <PercentageVisual
+          chartName="Test Case Effectiveness"
+          percentage="12.54"
+          tooltip="Number of defects found divided by number of test cases executed"
+        />
+      </div>
+      <div className="grid grid-cols-4 py-10">
+        <PercentageVisual
+          chartName="Defect Leakage"
+          percentage="3"
+          tooltip="Number of defects found in production by end users"
+        />
+        <CountPercentageVisual
+          chartName="Automated Tests"
+          count={automatedTests.length}
+          percentage={automatedTestPercentage}
+          page="/automatedtests"
+        />
+        <CountPercentageVisual
+          chartName="Manual Tests"
+          count={manualTests.length}
+          percentage={manualTestPercentage}
+          page="/manualtests"
+        />
+      </div>
+      {/* <div>
         <ul className="grid justify-center space-y-2">
           {testRailData.map((testEntry: any, index: number) => (
             <li className="grid justify-center" key={index}>
@@ -55,26 +100,57 @@ export default function Index() {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
     </>
   );
 }
 
 export async function loader() {
-  const headers = {
-    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
-  };
-  const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_results_for_run/2`,
-    { headers }
-  );
-  const data = await res.json();
-  const numberOfTestCaseResultsInRun = data.size;
-  console.log(numberOfTestCaseResultsInRun);
-  console.log(data.results.length);
-  const testRailData = data.results;
-  // console.log(testRailData);
+  // const headers = {
+  //   Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  // };
+  // const res = await fetch(
+  //   `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_results_for_run/2`,
+  //   { headers }
+  // );
+  // const data = await res.json();
+  // const numberOfTestCaseResultsInRun = data.size;
+  // console.log(numberOfTestCaseResultsInRun);
+  // console.log(data.results.length);
+  // const testRailData = data.results;
+  // // console.log(testRailData);
 
-  // return json(await res.json());
-  return testRailData;
+  // // return json(await res.json());
+  // return testRailData;
+
+  const testRuns = await getCurrentTestRuns();
+  console.log(testRuns);
+
+  // const testRunData = []
+  // for (let index = 0; index < testRuns.length; index++) {
+  //   const element = testRuns[index];
+  //   const metricData = testRunChartData(element);
+  //   console.log(metricData);
+  //   // testRunData.push(metricData)
+  // }
+  const testCaseData = await getAllTestCases();
+  const totalTestCases = testCaseData.length;
+  const manualTests = getManualTests(testCaseData);
+  const automatedTests = getAutomatedTests(testCaseData);
+  const automatedTestPercentage = getPercentage(
+    automatedTests.length,
+    totalTestCases
+  );
+  const manualTestPercentage = getPercentage(
+    manualTests.length,
+    totalTestCases
+  );
+
+  return {
+    testRuns,
+    manualTests,
+    manualTestPercentage,
+    automatedTests,
+    automatedTestPercentage,
+  };
 }
