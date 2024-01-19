@@ -124,7 +124,7 @@ export async function loader() {
   // return testRailData;
 
   const testRuns = await getCurrentTestRuns();
-  console.log(testRuns);
+  // console.log(testRuns);
 
   // const testRunData = []
   // for (let index = 0; index < testRuns.length; index++) {

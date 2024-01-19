@@ -1,13 +1,15 @@
 import { useLoaderData } from "@remix-run/react";
 import Header from "~/components/Header";
+import TestList from "~/components/TestList";
 import { getAllTestCases, getManualTests } from "~/data/testrail.server";
 
 export default function ManualTests() {
-  //   const { tests } = useLoaderData<typeof loader>();
+  const { manualTests } = useLoaderData<typeof loader>();
   return (
     <>
       <Header />
       <h1 className="text-center text-2xl">Manual Tests</h1>
+      <TestList testCases={manualTests} />
     </>
   );
 }
@@ -17,7 +19,7 @@ export async function loader() {
   //   console.log(testCaseData);
 
   const manualTests = getManualTests(testCaseData);
-  console.log(manualTests);
-  console.log(manualTests.length);
-  return null;
+  //   console.log(manualTests);
+  //   console.log(manualTests.length);
+  return { manualTests };
 }
