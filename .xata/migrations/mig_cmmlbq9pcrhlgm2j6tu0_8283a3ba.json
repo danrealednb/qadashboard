@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmlbq9pcrhlgm2j6tu0",
+  "parentID": "mig_cmmlbjppcrhlgm2j6tt0",
+  "checksum": "1:8283a3bad5a335115dcb4e69482ed36838b5fabf89d92b5f439ea7f33ed7c0e3",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "dev_bugs",
+          "type": "int"
+        },
+        "table": "metrics"
+      }
+    }
+  ]
+}

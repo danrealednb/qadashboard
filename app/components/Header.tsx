@@ -13,18 +13,27 @@ export default function Header() {
         </h1>
         <nav className="flex justify-center items-center text-center  pb-2 pt-2">
           <ul className="flex justify-center items-center text-center space-x-5">
-            <li>
+            <li key={1}>
               <Link to="/" className="underline" data-testid="homeLink">
                 Main
               </Link>
             </li>
-            <li>
+            <li key={2}>
               <Link
                 to="/breakdown"
                 className="underline"
                 data-testid="breakdownLink"
               >
                 Breakdowns
+              </Link>
+            </li>
+            <li key={3}>
+              <Link
+                to="/bugcharts"
+                className="underline"
+                data-testid="bugchartsLink"
+              >
+                Bugs
               </Link>
             </li>
           </ul>

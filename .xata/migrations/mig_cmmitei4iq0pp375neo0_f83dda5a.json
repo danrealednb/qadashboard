@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmitei4iq0pp375neo0",
+  "parentID": "mig_cmmit7a4iq0pp375nen0",
+  "checksum": "1:f83dda5a6dd32f182b7c1a584009ecb0d5e87d2b5095c2e86991dff17305550a",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "month",
+          "type": "string"
+        },
+        "table": "metrics"
+      }
+    }
+  ]
+}
