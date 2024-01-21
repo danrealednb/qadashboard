@@ -36,6 +36,15 @@ export default function Header() {
                 Bugs
               </Link>
             </li>
+            <li key={4}>
+              <Link
+                to="/testtypecharts"
+                className="underline"
+                data-testid="testtypechartsLink"
+              >
+                Test Charts
+              </Link>
+            </li>
           </ul>
         </nav>
       </header>

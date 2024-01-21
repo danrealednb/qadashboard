@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmnt124iq0pp375ngh0",
+  "parentID": "mig_cmmnstq4iq0pp375ngg0",
+  "checksum": "1:b3f436beef985309b4472fcaba6a0bb777d675d8576e06281bc841dd7fdf6a5f",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "functional_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

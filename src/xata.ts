@@ -17,6 +17,29 @@ const tables = [
       { name: "prod_bugs", type: "int" },
     ],
   },
+  {
+    name: "test_types",
+    columns: [
+      { name: "month", type: "string" },
+      { name: "year", type: "string" },
+      { name: "total_tests", type: "int" },
+      { name: "automated_tests", type: "int" },
+      { name: "manual_tests", type: "int" },
+      { name: "accessibility_tests", type: "int" },
+      { name: "data_validation_tests", type: "int" },
+      { name: "e2e_tests", type: "int" },
+      { name: "functional_tests", type: "int" },
+      { name: "integration_tests", type: "int" },
+      { name: "performance_tests", type: "int" },
+      { name: "load_tests", type: "int" },
+      { name: "regression_tests", type: "int" },
+      { name: "security_tests", type: "int" },
+      { name: "smoke_tests", type: "int" },
+      { name: "unit_tests", type: "int" },
+      { name: "non_functional_tests", type: "int" },
+      { name: "other_tests", type: "int" },
+    ],
+  },
 ] as const;
 
 export type SchemaTables = typeof tables;
@@ -25,8 +48,12 @@ export type InferredTypes = SchemaInference<SchemaTables>;
 export type Bugs = InferredTypes["bugs"];
 export type BugsRecord = Bugs & XataRecord;
 
+export type TestTypes = InferredTypes["test_types"];
+export type TestTypesRecord = TestTypes & XataRecord;
+
 export type DatabaseSchema = {
   bugs: BugsRecord;
+  test_types: TestTypesRecord;
 };
 
 const DatabaseClient = buildClient();

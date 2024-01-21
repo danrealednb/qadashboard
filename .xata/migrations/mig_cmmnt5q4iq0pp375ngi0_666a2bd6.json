@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmnt5q4iq0pp375ngi0",
+  "parentID": "mig_cmmnt3r4ffclf5tfg430",
+  "checksum": "1:666a2bd687952d0a97b81c3cebbc892110e05d95d74f1dadccc1b16235175807",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "performance_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

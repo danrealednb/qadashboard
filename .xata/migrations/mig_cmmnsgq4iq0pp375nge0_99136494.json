@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmnsgq4iq0pp375nge0",
+  "parentID": "mig_cmmnschpcrhlgm2j6um0",
+  "checksum": "1:99136494072d1c49fe5198ffbdb093bc773e97085417004408a6ff3b9aac779f",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "automated_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

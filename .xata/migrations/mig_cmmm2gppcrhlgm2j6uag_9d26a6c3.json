@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmm2gppcrhlgm2j6uag",
+  "parentID": "mig_cmmm2f9pcrhlgm2j6u9g",
+  "checksum": "1:9d26a6c3f1ee8fac5167ee2a1090f01a5c2aa9e77c4817f0edf98a97fc3e892e",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "year",
+          "type": "string"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

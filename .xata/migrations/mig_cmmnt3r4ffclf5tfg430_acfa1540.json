@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmnt3r4ffclf5tfg430",
+  "parentID": "mig_cmmnt124iq0pp375ngh0",
+  "checksum": "1:acfa1540c01b10415d08f50b4d5b48a7fa5774cac2d696b9bc8f79f2be46baa6",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "integration_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

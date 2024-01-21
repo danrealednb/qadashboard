@@ -1,6 +1,5 @@
 import { Link } from "@remix-run/react";
 import Header from "~/components/Header";
-import StarbaseLineChart from "~/components/LineChart";
 
 export default function BugCharts() {
   const years = ["2023", "2024"];

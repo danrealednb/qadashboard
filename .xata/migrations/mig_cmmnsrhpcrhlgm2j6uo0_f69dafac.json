@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmnsrhpcrhlgm2j6uo0",
+  "parentID": "mig_cmmnso9pcrhlgm2j6un0",
+  "checksum": "1:f69dafac76d71313ccc94cdd006fb78de8ddd95a96f49f8259186069e865c2d4",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "data_validation_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

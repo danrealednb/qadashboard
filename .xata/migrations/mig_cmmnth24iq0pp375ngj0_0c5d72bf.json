@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmnth24iq0pp375ngj0",
+  "parentID": "mig_cmmntbhpcrhlgm2j6uq0",
+  "checksum": "1:0c5d72bf2d3d1138e950f9e74314fd9442a7845e845ba216f07af3dbca5055b0",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "security_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

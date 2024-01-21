@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmnstq4iq0pp375ngg0",
+  "parentID": "mig_cmmnsrhpcrhlgm2j6uo0",
+  "checksum": "1:7269c986a55e08a7461ece8689300c66ab77181434638f190eb0d3d2b28c104a",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "e2e_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}

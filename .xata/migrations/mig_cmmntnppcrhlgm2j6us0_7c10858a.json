@@ -1,0 +1,16 @@
+{
+  "id": "mig_cmmntnppcrhlgm2j6us0",
+  "parentID": "mig_cmmntlppcrhlgm2j6ur0",
+  "checksum": "1:7c10858ac9cbabcb63c51eb9fbd26ff001baaf0809af04e9894972a97476a609",
+  "operations": [
+    {
+      "addColumn": {
+        "column": {
+          "name": "non_functional_tests",
+          "type": "int"
+        },
+        "table": "test_types"
+      }
+    }
+  ]
+}
