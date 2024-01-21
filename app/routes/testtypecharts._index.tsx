@@ -62,10 +62,20 @@ export default function TestTypeCharts() {
           </button>
         </Form>
       </div>
-      <div className="grid justify-center py-10">
-        <h2 className="text-xl font-bold text-center">{testTypeTitle} Tests</h2>
-        <StarbaseLineChartTests chartData={chartData} />
-      </div>
+
+      {chartData.length === 0 && (
+        <div className="flex justify-center py-5 text-red-500 font-bold">
+          No Data To Display
+        </div>
+      )}
+      {chartData.length > 0 && (
+        <div className="grid justify-center py-10">
+          <h2 className="text-xl font-bold text-center">
+            {testTypeTitle} Tests
+          </h2>
+          <StarbaseLineChartTests chartData={chartData} />
+        </div>
+      )}
     </>
   );
 }
