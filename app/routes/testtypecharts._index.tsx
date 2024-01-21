@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
+import { DateTime } from "luxon";
 import Header from "~/components/Header";
 import StarbaseLineChartTests from "~/components/LineChartTests";
 import {
@@ -26,7 +27,7 @@ export default function TestTypeCharts() {
             id="year"
             name="year"
             className="border-2 border-white rounded"
-            defaultValue={years[0]}
+            defaultValue={DateTime.now().year.toString()}
           >
             {years.map((year) => {
               return (
@@ -43,7 +44,7 @@ export default function TestTypeCharts() {
             id="testType"
             name="testType"
             className="border-2 border-white rounded"
-            defaultValue={testTypes[0]}
+            defaultValue="Total"
           >
             {testTypes.map((tt) => {
               return (
@@ -73,7 +74,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
 
-  const year = search.get("year") || "2023";
+  const year = search.get("year") || DateTime.now().year.toString();
   const testType = search.get("testType") || "Total";
   const testTypeTitle = testType;
   const dbTestTypeMetrics = await getTestTypeMetrics(year);
