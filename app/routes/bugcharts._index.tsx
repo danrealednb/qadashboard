@@ -71,8 +71,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const metrics = await getMetrics(year);
 
-  // console.log(metrics);
-
   const bugData = metrics.map((bugs: any) => {
     return {
       name: `${bugs.month}`,
