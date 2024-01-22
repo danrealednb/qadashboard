@@ -2,6 +2,7 @@ import { type MetaFunction } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import CountVisualWithLink from "~/components/ChartVisualWithLink";
 import CountVisual from "~/components/CountVisual";
+import CountVisualWithTooltip from "~/components/CountVisualWithToolTip";
 
 import Header from "~/components/Header";
 import PercentageVisual from "~/components/PercentageVisual";
@@ -55,7 +56,11 @@ export default function Index() {
           percentage="12.54"
           tooltip="Test cases for Jira tickets"
         />
-        <CountVisual chartName="Defect Density" count={defectDensity} />
+        <CountVisualWithTooltip
+          chartName="Defect Density"
+          count={parseFloat(defectDensity)}
+          tooltip="Number of defects divided by number of stories"
+        />
         <PercentageVisual
           chartName="Defect Resolution Time"
           percentage="12.54"
