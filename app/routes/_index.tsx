@@ -10,10 +10,12 @@ import PercentageVisual from "~/components/PercentageVisual";
 import StarbasePieChart from "~/components/StarbasePieChart";
 
 import {
+  getDefectResolutionTime,
   getJiraBugs30Days,
   getJiraBugs30DaysDev,
   getJiraBugs30DaysProd,
   getJiraStories30Days,
+  getResolvedJiraBugs30Days,
 } from "~/data/jira.server";
 import { getCurrentTestRuns, TEST_RUN_DATA } from "~/data/testrail.server";
 
@@ -33,6 +35,7 @@ export default function Index() {
     testCaseEffectiveness,
     jiraStories30Days,
     defectDensity,
+    defectResolutionTime,
   } = useLoaderData<typeof loader>();
 
   return (
@@ -61,14 +64,15 @@ export default function Index() {
           count={parseFloat(defectDensity)}
           tooltip="Number of defects divided by number of stories"
         />
-        <PercentageVisual
+        <CountVisualWithTooltip
           chartName="Defect Resolution Time"
-          percentage="12.54"
-          tooltip="Defect closure date minus defect creation date"
+          count={parseFloat(defectResolutionTime.toFixed(2))}
+          tooltip="Defect closure date minus defect creation date. Average number of days taken to fix bugs"
         />
-        <CountVisual
+        <CountVisualWithTooltip
           chartName="Test Case Effectiveness"
           count={parseFloat(testCaseEffectiveness)}
+          tooltip="Number of defects found divided by number of test cases executed"
         />
         <CountVisual
           chartName="Total Stories Completed"
@@ -109,9 +113,12 @@ export async function loader() {
   }, 0);
 
   const jiraDefects30Days = await getJiraBugs30Days();
+  // console.log(jiraDefects30Days);
   const jiraDefects30DaysProd = await getJiraBugs30DaysProd();
   const jiraDefects30DaysDev = await getJiraBugs30DaysDev();
   const jiraStories30Days = await getJiraStories30Days();
+
+  const jiraDefectsResolved30Days = await getResolvedJiraBugs30Days();
 
   const testCaseEffectiveness = (
     (jiraDefects30Days.totalJiraIssues / totalTestsExecuted) *
@@ -123,6 +130,10 @@ export async function loader() {
     100
   ).toFixed(2);
 
+  const defectResolutionTime = await getDefectResolutionTime(
+    jiraDefectsResolved30Days.jiraData
+  );
+
   return {
     testRuns,
     jiraDefects30Days,
@@ -131,5 +142,6 @@ export async function loader() {
     testCaseEffectiveness,
     jiraStories30Days,
     defectDensity,
+    defectResolutionTime,
   };
 }
