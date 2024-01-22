@@ -1,9 +1,9 @@
-import { TEST_CASE } from "~/data/testrail.server";
+import { TEST_CASE_RESULT } from "~/data/testrail.server";
 
-export default function TestList({
+export default function TestRunTestList({
   testCases,
 }: {
-  testCases: Array<TEST_CASE>;
+  testCases: Array<TEST_CASE_RESULT>;
 }) {
   const getTestTypesToStr = (testTypes: Array<number>) => {
     const mappedTypes = testTypes.map((test: number) => (
@@ -73,14 +73,41 @@ export default function TestList({
           <thead>
             <tr className="text-center border-2 border-gray-900">
               <th className="border-r-2 border-gray-900 px-2 py-1">Title</th>
+              <th className="border-r-2 border-gray-900 px-2 py-1">Status</th>
               <th className="border-r-2 border-gray-900 px-2 py-1">Refs</th>
               <th className="px-2 py-1">Type</th>
             </tr>
           </thead>
           <tbody>
-            {testCases.map((test: TEST_CASE) => (
+            {testCases.map((test: TEST_CASE_RESULT) => (
               <tr className="text-center border-2 border-gray-200">
                 <td className="border-r-2 px-2 py-1">{test.title}</td>
+
+                {test.status === "Passed" && (
+                  <td className="border-r-2 px-2 py-1 text-green-600 font-bold">
+                    {test.status}
+                  </td>
+                )}
+                {test.status === "Failed" && (
+                  <td className="border-r-2 px-2 py-1 text-red-600 font-bold">
+                    {test.status}
+                  </td>
+                )}
+                {test.status === "Untested" && (
+                  <td className="border-r-2 px-2 py-1 text-gray-600 font-bold">
+                    {test.status}
+                  </td>
+                )}
+                {test.status === "Blocked" && (
+                  <td className="border-r-2 px-2 py-1 text-purple-600 font-bold">
+                    {test.status}
+                  </td>
+                )}
+                {test.status === "Retest" && (
+                  <td className="border-r-2 px-2 py-1 text-orange-500 font-bold">
+                    {test.status}
+                  </td>
+                )}
                 {/* <td className="border-r-2 px-2 py-1">{test.refs}</td> */}
                 {test.refs && (
                   <td className="border-r-2 px-2 py-1">
@@ -89,12 +116,12 @@ export default function TestList({
                 )}
                 {!test.refs && <td className="border-r-2 px-2 py-1"></td>}
                 {/* <td className="px-2 py-1">{test.custom_test_case_type}</td> */}
-                {test.custom_test_case_type && (
+                {test.test_case_type && (
                   <td className="px-2 py-1">
-                    {getTestTypesToStr(test.custom_test_case_type)}
+                    {getTestTypesToStr(test.test_case_type)}
                   </td>
                 )}
-                {!test.custom_test_case_type && <td className="px-2 py-1"></td>}
+                {!test.test_case_type && <td className="px-2 py-1"></td>}
               </tr>
             ))}
           </tbody>

@@ -10,6 +10,7 @@ export interface TEST_RUN_DATA {
   retest: number;
   untested: number;
   name?: string;
+  id: number;
 }
 
 export const testRunChartData = (data: TEST_RUN_DATA) => {
@@ -55,6 +56,7 @@ export async function getCurrentTestRuns() {
       blocked: element.blocked_count,
       untested: element.untested_count,
       name: element.name,
+      id: element.id,
     };
     testRunData.push(obj);
   }
@@ -67,6 +69,12 @@ export interface TEST_CASE {
   refs: string | null;
   custom_automated_test: number;
   custom_test_case_type: Array<number> | undefined | null;
+}
+export interface TEST_CASE_RESULT {
+  title: string;
+  refs: string | null;
+  test_case_type: Array<number> | undefined | null;
+  status: string;
 }
 
 // let offsetAmount = 0;
@@ -158,7 +166,7 @@ export const getPercentage = (metric: number, totalTestCases: number) => {
 //   return mappedTypes;
 // };
 
-// const testTypeMapping = (testType: number) => {
+// export const testTypeMapping = (testType: number) => {
 //   switch (testType) {
 //     case 1:
 //       return "Accessibility";
@@ -190,3 +198,60 @@ export const getPercentage = (metric: number, totalTestCases: number) => {
 //       return "NA";
 //   }
 // };
+
+export async function getTestsInTestRun(
+  offset: number = 0,
+  testRun: string | number
+) {
+  const allTestData: any = [];
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_tests/${testRun}&offset=${offset}`,
+    { headers }
+  );
+  const data = await res.json();
+  const fullTestCaseData = data.tests;
+  if (data.size < 250) {
+    // don't need to do anything else, just return the data
+    allTestData.push(...fullTestCaseData);
+    // const formatedTestRunData = strippedDownTestRunData(allTestData);
+    // console.log(formatedTestRunData.length);
+    // return res;
+    return allTestData;
+  } else {
+    // need to get more data
+    const offsetTestData = await getTestCasesFromTestRail(offset + 250);
+    allTestData.push(...fullTestCaseData);
+    allTestData.push(...offsetTestData);
+    return allTestData;
+  }
+}
+
+export const strippedDownTestRunData = (testData: Array<any>) => {
+  const results = testData.map((test: any) => ({
+    status: getTestRailStatus(test.status_id),
+    title: test.title,
+    refs: test.refs,
+    test_case_type: test.custom_test_case_type,
+  }));
+  return results;
+};
+
+const getTestRailStatus = (status: number) => {
+  switch (status) {
+    case 1:
+      return "Passed";
+    case 2:
+      return "Blocked";
+    case 3:
+      return "Untested";
+    case 4:
+      return "Retest";
+    case 5:
+      return "Failed";
+    default:
+      return "Untested";
+  }
+};

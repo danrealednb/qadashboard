@@ -50,6 +50,7 @@ export default function Index() {
             blocked={run.blocked}
             retest={run.retest}
             untested={run.untested}
+            testRunId={run.id}
           />
         ))}
       </div>

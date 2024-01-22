@@ -1,3 +1,4 @@
+import { Link } from "@remix-run/react";
 import { PieChart, Pie, Cell } from "recharts";
 import { TEST_RUN_DATA } from "~/data/testrail.server";
 import { testRunChartData } from "~/data/testrail.server";
@@ -19,6 +20,7 @@ export default function StarbasePieChart({
   blocked,
   retest,
   untested,
+  testRunId,
 }: {
   chartName: string;
   passed: number;
@@ -26,6 +28,7 @@ export default function StarbasePieChart({
   blocked: number;
   retest: number;
   untested: number;
+  testRunId: number;
 }) {
   // const chartData = testRunChartData(runData);
   // console.log(chartData);
@@ -70,7 +73,7 @@ export default function StarbasePieChart({
             dominantBaseline="central"
           >
             <tspan fontSize="20" className="font-bold">
-              {chartName}
+              <Link to={`/testrunresults/${testRunId}`}>{chartName}</Link>
             </tspan>
           </text>
         </PieChart>
