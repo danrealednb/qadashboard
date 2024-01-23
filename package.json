@@ -10,7 +10,7 @@
     "start": "remix-serve ./build/index.js",
     "typecheck": "tsc",
     "db:migrations": "drizzle-kit generate:sqlite",
-    "addtest": "tsx ./utils/test.ts"
+    "monthlyData": "tsx ./utils/monthlyData.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
