@@ -1,6 +1,0 @@
-{
-  "databaseURL": "https://realed-s-workspace-i7sf28.us-east-1.xata.sh/db/qa-dashboard",
-  "codegen": {
-    "output": "src/xata.ts"
-  }
-}

@@ -8,7 +8,8 @@
     "dev": "remix dev --manual",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
     "start": "remix-serve ./build/index.js",
-    "typecheck": "tsc"
+    "typecheck": "tsc",
+    "db:migrations": "drizzle-kit generate:sqlite --out ./app/drizzle/migrations --schema ./app/data/schema.server.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -20,8 +21,9 @@
     "@remix-run/node": "^2.5.1",
     "@remix-run/react": "^2.5.1",
     "@remix-run/serve": "^2.5.1",
-    "@xata.io/client": "^0.28.3",
     "axios": "^1.6.5",
+    "better-sqlite3": "^9.3.0",
+    "drizzle-orm": "^0.29.3",
     "isbot": "^4.1.0",
     "luxon": "^3.4.4",
     "react": "^18.2.0",
@@ -31,10 +33,12 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.5.1",
+    "@types/better-sqlite3": "^7.6.8",
     "@types/luxon": "^3.4.2",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
+    "drizzle-kit": "^0.20.13",
     "eslint": "^8.38.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-import-resolver-typescript": "^3.6.1",

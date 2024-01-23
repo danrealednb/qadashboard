@@ -2,7 +2,7 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { Form, Link, useLoaderData } from "@remix-run/react";
 import Header from "~/components/Header";
 import StarbaseLineChart from "~/components/LineChart";
-import { getMetrics, years } from "~/data/db.server";
+import { getBugMetrics, years } from "~/data/db.server";
 import { DateTime } from "luxon";
 
 export default function BugCharts() {
@@ -69,7 +69,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
   const year = search.get("year") || DateTime.now().year.toString();
 
-  const metrics = await getMetrics(year);
+  const metrics = await getBugMetrics(year);
 
   const bugData = metrics.map((bugs: any) => {
     return {

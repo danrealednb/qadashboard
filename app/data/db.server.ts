@@ -1,4 +1,6 @@
-import { getXataClient } from "src/xata";
+import { eq } from "drizzle-orm";
+import { db } from "~/data/config.server";
+import { tests, bugs } from "~/data/schema.server";
 
 export const testTypeMappingDB = (testType: string) => {
   switch (testType) {
@@ -65,12 +67,12 @@ export const TEST_TYPES = [
 
 export const years = ["2023", "2024"];
 
-export async function getMetrics(year: string) {
-  const metrics = await getXataClient().db.bugs.filter({ year }).getAll();
+export async function getBugMetrics(year: string) {
+  const metrics = db.select().from(bugs).where(eq(bugs.year, year)).all();
   return metrics;
 }
 
 export async function getTestTypeMetrics(year: string) {
-  const metrics = await getXataClient().db.test_types.filter({ year }).getAll();
+  const metrics = db.select().from(tests).where(eq(tests.year, year)).all();
   return metrics;
 }
