@@ -7,8 +7,8 @@ export default function BasicTooltip({
 }) {
   return (
     <>
-      <div class="has-tooltip">
-        <span class="tooltip rounded shadow-lg p-1 bg-gray-100 text-blue-700 -mt-8">
+      <div className="has-tooltip">
+        <span className="tooltip rounded shadow-lg p-1 bg-gray-100 text-blue-700 -mt-8">
           {tooltip}
         </span>
         <span className="text-xl font-bold"> {chartName}</span>
