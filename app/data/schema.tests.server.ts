@@ -40,32 +40,3 @@ export const tests = sqliteTable("tests", {
 
 export type SelectTests = typeof tests.$inferSelect;
 export type InsertTests = typeof tests.$inferInsert;
-
-export const bugs = sqliteTable("bugs", {
-  id: integer("id").primaryKey(),
-  month: text("month", {
-    enum: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ],
-  }).notNull(),
-  year: text("year").notNull(),
-  total_bugs: integer("total_bugs").notNull(),
-  dev_bugs: integer("dev_bugs").notNull(),
-  prod_bugs: integer("prod_bugs").notNull(),
-  createdAt: text("createdAt").notNull().default(`datetime("now")`),
-  updatedAt: text("updatedAt").notNull().default(`datetime("now")`),
-});
-
-export type SelectBugs = typeof bugs.$inferSelect;
-export type InsertBugs = typeof bugs.$inferInsert;

@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, json } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { db } from "~/data/config.server";
-import { InsertUser, tests } from "~/data/schema.server";
+import { InsertUser, tests } from "~/data/schema.tests.server";
 
 export async function action({ request }: ActionFunctionArgs) {
   const formData = await request.formData();

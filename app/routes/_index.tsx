@@ -114,7 +114,6 @@ export async function loader() {
   }, 0);
 
   const jiraDefects30Days = await getJiraBugs30Days();
-  // console.log(jiraDefects30Days);
   const jiraDefects30DaysProd = await getJiraBugs30DaysProd();
   const jiraDefects30DaysDev = await getJiraBugs30DaysDev();
   const jiraStories30Days = await getJiraStories30Days();

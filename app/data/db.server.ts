@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "~/data/config.server";
-import { tests, bugs } from "~/data/schema.server";
+import { tests } from "~/data/schema.tests.server";
+import { bugs } from "~/data/schema.bugs.server";
 
 export const testTypeMappingDB = (testType: string) => {
   switch (testType) {
