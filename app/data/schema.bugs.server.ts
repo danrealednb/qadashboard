@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
+import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
 export const bugs = sqliteTable("bugs", {
   id: integer("id").primaryKey(),
   month: text("month", {
@@ -21,7 +21,7 @@ export const bugs = sqliteTable("bugs", {
   total_bugs: integer("total_bugs").notNull(),
   dev_bugs: integer("dev_bugs").notNull(),
   prod_bugs: integer("prod_bugs").notNull(),
-  bug_resolution: text("bug_resolution").notNull(),
+  bug_resolution: real("bug_resolution").notNull(),
   stories_resolved: integer("stories_resolved").notNull(),
   createdAt: text("createdAt").notNull().default(`datetime("now")`),
   updatedAt: text("updatedAt").notNull().default(`datetime("now")`),

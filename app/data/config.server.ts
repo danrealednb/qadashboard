@@ -9,5 +9,5 @@ if (!process.env.DATABASE_PATH) {
 const betterSqlite = new Database(process.env.DATABASE_PATH);
 export const db = drizzle(betterSqlite);
 
-migrate(db, { migrationsFolder: "drizzle" });
-betterSqlite.close();
+migrate(db, { migrationsFolder: "app/drizzle" });
+// betterSqlite.close();
