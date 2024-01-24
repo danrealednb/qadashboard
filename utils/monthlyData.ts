@@ -11,7 +11,6 @@ import {
 import {
   getAutomatedTests,
   getManualTests,
-  getPercentage,
   getTestCasesFromTestRail,
   getTestTypeTests,
 } from "~/data/testrail.server";
@@ -20,6 +19,12 @@ import { db } from "~/data/config.server";
 import { tests, InsertTests } from "~/data/schema.tests.server";
 import { bugs, InsertBugs } from "~/data/schema.bugs.server";
 import { DateTime } from "luxon";
+
+// const currentMonth = DateTime.now().monthShort;
+// const currentYear = DateTime.now().year;
+
+const currentMonth = DateTime.now().plus({ months: 5 }).monthShort;
+const currentYear = DateTime.now().minus({ years: 1 }).year;
 
 async function getBugData() {
   const jiraDefects30Days = await getJiraBugs30Days();
@@ -32,11 +37,8 @@ async function getBugData() {
     jiraDefectsResolved30Days.jiraData
   );
 
-  const currentMonth = DateTime.now().monthShort;
-  const currentYear = DateTime.now().year;
-
   const record: InsertBugs = {
-    month: currentMonth,
+    month: currentMonth as InsertTests["month"],
     year: currentYear.toString(),
     total_bugs: jiraDefects30Days.totalJiraIssues,
     dev_bugs: jiraDefects30DaysDev.totalJiraIssues,
@@ -56,83 +58,60 @@ async function getTestTypeData() {
   const totalTestCases = testCaseData.length;
 
   const automatedTests = getAutomatedTests(testCaseData);
-  const automatedTestPercentage = getPercentage(
-    automatedTests.length,
-    totalTestCases
-  );
+
   const manualTests = getManualTests(testCaseData);
-  const manualTestPercentage = getPercentage(
-    manualTests.length,
-    totalTestCases
-  );
 
   const accessibilityTests = getTestTypeTests(testCaseData, 1);
-  const accessibilityTestPercentage = getPercentage(
-    accessibilityTests.length,
-    totalTestCases
-  );
 
   const dataValidationTests = getTestTypeTests(testCaseData, 2);
-  const dataValidationTestPercentage = getPercentage(
-    dataValidationTests.length,
-    totalTestCases
-  );
 
   const e2eTests = getTestTypeTests(testCaseData, 3);
-  const e2eTestPercentage = getPercentage(e2eTests.length, totalTestCases);
 
   const functionalTests = getTestTypeTests(testCaseData, 4);
-  const functionalTestPercentage = getPercentage(
-    functionalTests.length,
-    totalTestCases
-  );
 
   const integrationTests = getTestTypeTests(testCaseData, 5);
-  const integrationTestPercentage = getPercentage(
-    integrationTests.length,
-    totalTestCases
-  );
+
   const performanceTests = getTestTypeTests(testCaseData, 6);
-  const performanceTestPercentage = getPercentage(
-    performanceTests.length,
-    totalTestCases
-  );
 
   const loadTests = getTestTypeTests(testCaseData, 7);
-  const loadTestPercentage = getPercentage(loadTests.length, totalTestCases);
 
   const regressionTests = getTestTypeTests(testCaseData, 8);
-  const regressionTestPercentage = getPercentage(
-    regressionTests.length,
-    totalTestCases
-  );
 
   const securityTests = getTestTypeTests(testCaseData, 9);
-  const securityTestPercentage = getPercentage(
-    securityTests.length,
-    totalTestCases
-  );
 
   const smokeTests = getTestTypeTests(testCaseData, 10);
-  const smokeTestPercentage = getPercentage(smokeTests.length, totalTestCases);
 
   const unitTests = getTestTypeTests(testCaseData, 11);
-  const unitTestPercentage = getPercentage(unitTests.length, totalTestCases);
 
   const nonFunctionalTests = getTestTypeTests(testCaseData, 12);
-  const nonFunctionalTestPercentage = getPercentage(
-    nonFunctionalTests.length,
-    totalTestCases
-  );
+  const otherTests = getTestTypeTests(testCaseData, 13);
 
-  //   const record: InsertTests = {
-  //     month: vals.month.toString(),
-  //     year: vals.year.toString(),
-  //     total_tests: parseInt(vals.total_tests.toString()),
-  //   };
-  //   db.insert(tests).values(record).run();
+  const record: InsertTests = {
+    month: currentMonth as InsertTests["month"],
+    year: currentYear.toString(),
+    total_tests: totalTestCases,
+    automated_tests: automatedTests.length,
+    manual_tests: manualTests.length,
+    accessibility_tests: accessibilityTests.length,
+    data_validation_tests: dataValidationTests.length,
+    e2e_tests: e2eTests.length,
+    functional_tests: functionalTests.length,
+    integration_tests: integrationTests.length,
+    performance_tests: performanceTests.length,
+    load_tests: loadTests.length,
+    regression_tests: regressionTests.length,
+    security_tests: securityTests.length,
+    smoke_tests: smokeTests.length,
+    unit_tests: unitTests.length,
+    non_functional_tests: nonFunctionalTests.length,
+    other_tests: otherTests.length,
+  };
+
+  console.log("Test Data", record);
+  const recordId = db.insert(tests).values(record).run().lastInsertRowid;
+  console.log("Inserted Record Id", recordId);
 }
 
 getBugData();
 
-// getTestTypeData()
+getTestTypeData();
