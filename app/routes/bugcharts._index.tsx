@@ -6,8 +6,14 @@ import { getBugMetrics, years } from "~/data/db.server";
 import { DateTime } from "luxon";
 
 export default function BugCharts() {
-  const { years, bugData, devBugData, prodBugData } =
-    useLoaderData<typeof loader>();
+  const {
+    years,
+    bugData,
+    devBugData,
+    prodBugData,
+    resolutionTimeData,
+    storiesResolved,
+  } = useLoaderData<typeof loader>();
   return (
     <>
       <Header />
@@ -57,6 +63,16 @@ export default function BugCharts() {
 
           <h2 className="text-center text-2xl py-5 underline">Prod Bugs</h2>
           <StarbaseLineChart chartData={prodBugData} />
+
+          <h2 className="text-center text-2xl py-5 underline">
+            Defect Resolution Time
+          </h2>
+          <StarbaseLineChart chartData={resolutionTimeData} />
+
+          <h2 className="text-center text-2xl py-5 underline">
+            Stories Resolved
+          </h2>
+          <StarbaseLineChart chartData={storiesResolved} />
         </>
       )}
     </>
@@ -91,6 +107,25 @@ export async function loader({ request }: LoaderFunctionArgs) {
       bugs: bugs.prod_bugs,
     };
   });
+  const resolutionTimeData = metrics.map((bugs: any) => {
+    return {
+      name: `${bugs.month}`,
+      bugs: bugs.bug_resolution,
+    };
+  });
+  const storiesResolved = metrics.map((bugs: any) => {
+    return {
+      name: `${bugs.month}`,
+      bugs: bugs.stories_resolved,
+    };
+  });
 
-  return { years, bugData, devBugData, prodBugData };
+  return {
+    years,
+    bugData,
+    devBugData,
+    prodBugData,
+    resolutionTimeData,
+    storiesResolved,
+  };
 }

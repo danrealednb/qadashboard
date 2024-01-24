@@ -20,11 +20,11 @@ import { tests, InsertTests } from "~/data/schema.tests.server";
 import { bugs, InsertBugs } from "~/data/schema.bugs.server";
 import { DateTime } from "luxon";
 
-// const currentMonth = DateTime.now().monthShort;
-// const currentYear = DateTime.now().year;
+const currentMonth = DateTime.now().monthShort;
+const currentYear = DateTime.now().year;
 
-const currentMonth = DateTime.now().plus({ months: 5 }).monthShort;
-const currentYear = DateTime.now().minus({ years: 1 }).year;
+// const currentMonth = DateTime.now().plus({ months: 11 }).monthShort;
+// const currentYear = DateTime.now().minus({ years: 1 }).year;
 
 async function getBugData() {
   const jiraDefects30Days = await getJiraBugs30Days();
