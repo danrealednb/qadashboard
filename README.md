@@ -36,3 +36,22 @@ Make sure to deploy the output of `remix build`
 
 - `build/`
 - `public/build/`
+
+## Docker
+
+`docker build . -t qadashboard`
+
+`docker run -p 3000:3000 -v $(pwd)/app:/qadashboard/app --env-file .env -it qadashboard`
+
+### ENV FILE
+
+- `.env` Goes at root of project
+
+```
+TEST_RAIL_INSTANCE=instance_name.testrail.io
+TEST_RAIL_API_KEY=apikey
+JIRA_CREDENTIALS=email/apikey
+DATABASE_PATH=./qa.db
+```
+
+- Do not use quotes or double quotes in .env file. Docker treats those as characters

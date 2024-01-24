@@ -1,5 +1,5 @@
 FROM node:20-alpine
-WORKDIR /usr/server/app
+WORKDIR /qadashboard
 COPY ./package.json ./
 RUN npm install
 COPY ./ .
