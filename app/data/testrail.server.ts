@@ -255,3 +255,19 @@ const getTestRailStatus = (status: number) => {
       return "Untested";
   }
 };
+
+export async function getTotalTestsExecuted(
+  testRuns: Promise<TEST_RUN_DATA[]>
+) {
+  const tr = await testRuns;
+  const totalTestsExecuted = tr.reduce((accumulator, currentValue) => {
+    return (
+      accumulator +
+      currentValue.passed +
+      currentValue.failed +
+      currentValue.retest +
+      currentValue.blocked
+    );
+  }, 0);
+  return totalTestsExecuted;
+}

@@ -10,6 +10,11 @@ export interface JIRA_ISSUE_DATA {
   completeDate: string;
 }
 
+export interface JIRA_ISSUE_STORY_DATA {
+  key: string;
+  title: string;
+}
+
 export async function getJiraBugs30Days() {
   const query = `project=PLAT%26issuetype=Bug%26created>=-30d&fields=id.key,summary,created,resolutiondate&maxResults=100`;
   const response = await axios({
@@ -165,7 +170,7 @@ export async function getJiraStories30Days() {
   for (let index = 0; index < response.data.issues.length; index++) {
     const element = response.data.issues[index];
 
-    const obj: JIRA_ISSUE_DATA = {
+    const obj: JIRA_ISSUE_STORY_DATA = {
       key: element.key,
       title: element.fields.summary,
     };
@@ -236,4 +241,33 @@ export async function getDefectResolutionTime(
   }
   const average = bugDays.reduce((a, b) => a + b) / bugDays.length;
   return average;
+}
+
+export async function getTestCaseEffectiveness(
+  thirtyDaysBugs: Promise<{ totalJiraIssues: number }>,
+  totalTestsExecuted: Promise<number>
+) {
+  const { totalJiraIssues } = await thirtyDaysBugs;
+  const tests = await totalTestsExecuted;
+  const testCaseEffectiveness = ((totalJiraIssues / tests) * 100).toFixed(2);
+
+  return testCaseEffectiveness;
+}
+
+export async function getDefectDensity(
+  thirtyDaysBugs: Promise<{ totalJiraIssues: number }>,
+  thirtyDaysStories: Promise<{ totalJiraIssues: number }>
+) {
+  const bugs = (await thirtyDaysBugs).totalJiraIssues;
+  const stories = (await thirtyDaysStories).totalJiraIssues;
+  const defectDensity = ((bugs / stories) * 100).toFixed(2);
+  return defectDensity;
+}
+
+export async function getJiraDefectResolutionTime(
+  thirtyDaysResolvedBugs: Promise<{ jiraData: Array<JIRA_ISSUE_DATA> }>
+) {
+  const { jiraData } = await thirtyDaysResolvedBugs;
+  const defectResolutionTime = getDefectResolutionTime(jiraData);
+  return defectResolutionTime;
 }
