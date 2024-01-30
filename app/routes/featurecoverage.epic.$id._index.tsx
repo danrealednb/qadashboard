@@ -45,6 +45,11 @@ export default function FeatureCoverageStories() {
       </h3>
 
       <ul className="grid justify-center space-y-2">
+        {testCoverage.length === 0 && (
+          <h4 className="text-purple-600 font-semibold">
+            No Stories Linked to Feature
+          </h4>
+        )}
         {testCoverage.map((story: TEST_COVERAGE) => {
           return (
             <>
@@ -54,12 +59,12 @@ export default function FeatureCoverageStories() {
                 </label>
                 {story.coverage && (
                   <label htmlFor="" className="text-green-600 font-semibold">
-                    True
+                    Covered
                   </label>
                 )}
                 {!story.coverage && (
                   <label htmlFor="" className="text-red-600 font-semibold">
-                    False
+                    NO COVERAGE
                   </label>
                 )}
               </li>
@@ -123,7 +128,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
     ).length;
 
     const coveragePercentage = (coverageCount / stories) * 100;
-    return coveragePercentage;
+    return coveragePercentage ? coveragePercentage : 0;
   };
   const tcp = testCoveragePercentage();
 

@@ -1,5 +1,5 @@
 import { type MetaFunction } from "@remix-run/node";
-import { useLoaderData, Await } from "@remix-run/react";
+import { useLoaderData, Await, Link } from "@remix-run/react";
 import CountVisualWithLink from "~/components/ChartVisualWithLink";
 import CountVisual from "~/components/CountVisual";
 import CountVisualWithTooltip from "~/components/CountVisualWithToolTip";
@@ -73,11 +73,14 @@ export default function Index() {
         </Suspense>
       </div>
       <div className="grid grid-cols-5">
-        <CountVisualWithLink
-          chartName="Feature Test Coverage"
-          count={0}
-          page="/featurecoverage"
-        />
+        <div className="grid justify-center text-center space-y-2">
+          <label htmlFor="" className="text-xl font-bold">
+            <Link to="/featurecoverage">Feature Test Coverage</Link>
+          </label>
+          <label htmlFor="" className="text-blue-700 font-bold">
+            <Link to="/featurecoverage">Click to learn more</Link>
+          </label>
+        </div>
 
         <Suspense fallback={<p>Loading Data.......</p>}>
           <Await resolve={defectDensity}>
