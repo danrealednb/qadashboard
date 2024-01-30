@@ -1,3 +1,5 @@
+import { JIRA_ISSUE_DATA, JIRA_ISSUE_STORY_DATA } from "./jira.server";
+
 export interface DATA_POINT {
   name: string;
   value: number;
@@ -69,6 +71,13 @@ export interface TEST_CASE {
   refs: string | null;
   custom_automated_test: number;
   custom_test_case_type: Array<number> | undefined | null;
+}
+export interface TEST_CASE_STR {
+  id: number;
+  title: string;
+  refs: string | null;
+  custom_automated_test: number;
+  custom_test_case_type: Array<string> | null;
 }
 export interface TEST_CASE_RESULT {
   title: string;
@@ -159,45 +168,45 @@ export const getPercentage = (metric: number, totalTestCases: number) => {
   return percentage.toString();
 };
 
-// export const getTestTypesToStr = (testTypes: Array<number>) => {
-//   const mappedTypes = testTypes
-//     .map((test: number) => testTypeMapping(test))
-//     .join(",");
-//   return mappedTypes;
-// };
+export const getTestTypesToStr = (testTypes: Array<number>) => {
+  const mappedTypes = testTypes
+    .map((test: number) => testTypeMapping(test))
+    .join(",");
+  return mappedTypes;
+};
 
-// export const testTypeMapping = (testType: number) => {
-//   switch (testType) {
-//     case 1:
-//       return "Accessibility";
-//     case 2:
-//       return "Data Validation";
-//     case 3:
-//       return "E2E";
-//     case 4:
-//       return "Functional";
-//     case 5:
-//       return "Integration";
-//     case 6:
-//       return "Performance";
-//     case 7:
-//       return "Load";
-//     case 8:
-//       return "Regression";
-//     case 9:
-//       return "Security";
-//     case 10:
-//       return "Smoke";
-//     case 11:
-//       return "Unit";
-//     case 12:
-//       return "Other";
-//     case 13:
-//       return "Non-Functional";
-//     default:
-//       return "NA";
-//   }
-// };
+export const testTypeMapping = (testType: number) => {
+  switch (testType) {
+    case 1:
+      return "Accessibility";
+    case 2:
+      return "Data Validation";
+    case 3:
+      return "E2E";
+    case 4:
+      return "Functional";
+    case 5:
+      return "Integration";
+    case 6:
+      return "Performance";
+    case 7:
+      return "Load";
+    case 8:
+      return "Regression";
+    case 9:
+      return "Security";
+    case 10:
+      return "Smoke";
+    case 11:
+      return "Unit";
+    case 12:
+      return "Non-Functional";
+    case 13:
+      return "Other";
+    default:
+      return "NA";
+  }
+};
 
 export async function getTestsInTestRun(
   offset: number = 0,
@@ -271,3 +280,108 @@ export async function getTotalTestsExecuted(
   }, 0);
   return totalTestsExecuted;
 }
+
+export async function getTestCasesFromTestRailV2(offset: number = 0) {
+  const allTestData: any = [];
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/1&suite_id=1&offset=${offset}`,
+    { headers }
+  );
+  const data = await res.json();
+  const fullTestCaseData = data.cases;
+  if (data.size < 250) {
+    // don't need to do anything else, just return the data
+    const scrubbedData = fullTestCaseData.map((testCase: TEST_CASE) => {
+      return {
+        id: testCase.id,
+        title: testCase.title,
+        refs: testCase.refs,
+        custom_automated_test: testCase.custom_automated_test,
+        custom_test_case_type: testCase.custom_test_case_type || null,
+      };
+    });
+
+    allTestData.push(...scrubbedData);
+    return allTestData;
+  } else {
+    // need to get more data
+    const offsetTestData = await getTestCasesFromTestRail(offset + 250);
+    const scrubbedData = fullTestCaseData.map((testCase: TEST_CASE) => {
+      return {
+        id: testCase.id,
+        title: testCase.title,
+        refs: testCase.refs,
+        custom_automated_test: testCase.custom_automated_test,
+        custom_test_case_type: testCase.custom_test_case_type || null,
+      };
+    });
+    allTestData.push(...scrubbedData);
+    const scrubbedData2 = offsetTestData.map((testCase: TEST_CASE) => {
+      return {
+        id: testCase.id,
+        title: testCase.title,
+        refs: testCase.refs,
+        custom_automated_test: testCase.custom_automated_test,
+        custom_test_case_type: testCase.custom_test_case_type || null,
+      };
+    });
+    allTestData.push(...scrubbedData2);
+    return allTestData;
+  }
+}
+
+export const getJiraRefTests = (
+  testCases: Array<TEST_CASE>,
+  jiraReference: string
+) => {
+  return testCases.filter((test: TEST_CASE) =>
+    test.refs?.split(",").includes(jiraReference)
+  );
+};
+
+export interface TEST_COVERAGE {
+  key: string;
+  title: string;
+  startDate: string;
+  completeDate: string;
+  coverage: boolean;
+  tests: Array<TEST_CASE_STR> | null | undefined;
+}
+export const getJiraRefTestsV2 = (
+  jiraStories: Array<JIRA_ISSUE_DATA>,
+  testCases: Array<TEST_CASE>
+) => {
+  const testCoverage: Array<TEST_COVERAGE> = [];
+  for (let index = 0; index < jiraStories.length; index++) {
+    const element = jiraStories[index];
+    const tests = testCases.filter((test: TEST_CASE) =>
+      test.refs?.split(",").includes(element.key)
+    );
+
+    const newTest: Array<TEST_CASE_STR> = tests.map((t: TEST_CASE) => {
+      return {
+        id: t.id,
+        title: t.title,
+        refs: t.refs,
+        custom_automated_test: t.custom_automated_test,
+        custom_test_case_type: t.custom_test_case_type
+          ? getTestTypesToStr(t.custom_test_case_type)
+          : ["Other"],
+      };
+    });
+
+    const obj: TEST_COVERAGE = {
+      key: element.key,
+      title: element.title,
+      startDate: element.startDate,
+      completeDate: element.completeDate,
+      coverage: tests.length > 0 ? true : false,
+      tests: newTest,
+    };
+    testCoverage.push(obj);
+  }
+  return testCoverage;
+};

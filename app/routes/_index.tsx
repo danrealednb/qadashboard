@@ -73,10 +73,10 @@ export default function Index() {
         </Suspense>
       </div>
       <div className="grid grid-cols-5">
-        <PercentageVisual
-          chartName="Test Coverage"
-          percentage="12.54"
-          tooltip="Test cases for Jira tickets"
+        <CountVisualWithLink
+          chartName="Feature Test Coverage"
+          count={0}
+          page="/featurecoverage"
         />
 
         <Suspense fallback={<p>Loading Data.......</p>}>
