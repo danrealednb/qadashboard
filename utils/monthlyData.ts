@@ -2,6 +2,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import {
   getDefectResolutionTime,
+  getDefectSeverityIndexMonthly,
   getJiraBugs30Days,
   getJiraBugs30DaysDev,
   getJiraBugs30DaysProd,
@@ -37,6 +38,10 @@ async function getBugData() {
     jiraDefectsResolved30Days.jiraData
   );
 
+  const defectSeverityIndex = await getDefectSeverityIndexMonthly(
+    jiraDefects30Days
+  );
+
   const record: InsertBugs = {
     month: currentMonth as InsertTests["month"],
     year: currentYear.toString(),
@@ -45,6 +50,7 @@ async function getBugData() {
     prod_bugs: jiraDefects30DaysProd.totalJiraIssues,
     bug_resolution: defectResolutionTime,
     stories_resolved: jiraStories30Days.totalJiraIssues,
+    defect_severity_index: parseFloat(defectSeverityIndex),
   };
 
   console.log("Bug Data", record);

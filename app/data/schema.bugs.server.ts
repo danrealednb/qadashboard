@@ -23,6 +23,7 @@ export const bugs = sqliteTable("bugs", {
   prod_bugs: integer("prod_bugs").notNull(),
   bug_resolution: real("bug_resolution").notNull(),
   stories_resolved: integer("stories_resolved").notNull(),
+  defect_severity_index: real("defect_severity_index").notNull(),
   createdAt: text("createdAt").notNull().default(`datetime("now")`),
   updatedAt: text("updatedAt").notNull().default(`datetime("now")`),
 });

@@ -11,10 +11,7 @@ export default function Bugs() {
       <h1 className="text-center text-2xl py-5 underline">
         Defects Found In Last 30 Days
       </h1>
-      <h2 className="text-center text-2xl pb-5 text-blue-500">
-        {data.totalJiraIssues}
-      </h2>
-      <JiraList jiraData={data.jiraData} />
+      <JiraList jiraData={data.jiraData} totalIssues={data.totalJiraIssues} />
     </>
   );
 }

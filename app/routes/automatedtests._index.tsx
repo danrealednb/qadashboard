@@ -4,6 +4,8 @@ import TestList from "~/components/TestList";
 import {
   getAllTestCases,
   getAutomatedTests,
+  getCustomTestCaseTypes,
+  getTestCaseTypes,
   getTestCasesFromTestRail,
 } from "~/data/testrail.server";
 
@@ -28,7 +30,6 @@ export async function loader() {
   const testCaseData = await getTestCasesFromTestRail(0);
 
   const automatedTests = getAutomatedTests(testCaseData);
-  //   console.log(automatedTests);
-  //   console.log(automatedTests.length);
+
   return { automatedTests };
 }

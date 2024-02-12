@@ -47,26 +47,26 @@ export const testTypeMappingDB = (testType: string) => {
   }
 };
 
-export const TEST_TYPES = [
-  "Total",
-  "Automated",
-  "Manual",
-  "Accessibility",
-  "Data Validation",
-  "E2E",
-  "Functional",
-  "Integration",
-  "Performance",
-  "Load",
-  "Regression",
-  "Security",
-  "Smoke",
-  "Unit",
-  "Non-Functional",
-  "Other",
-];
+// export const TEST_TYPES = [
+//   "Total",
+//   "Automated",
+//   "Manual",
+//   "Accessibility",
+//   "Data Validation",
+//   "E2E",
+//   "Functional",
+//   "Integration",
+//   "Performance",
+//   "Load",
+//   "Regression",
+//   "Security",
+//   "Smoke",
+//   "Unit",
+//   "Non-Functional",
+//   "Other",
+// ];
 
-export const years = ["2023", "2024"];
+export const years = ["2023", "2024", "2025"];
 
 export async function getBugMetrics(year: string) {
   const metrics = db.select().from(bugs).where(eq(bugs.year, year)).all();

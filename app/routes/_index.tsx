@@ -11,6 +11,7 @@ import StarbasePieChart from "~/components/StarbasePieChart";
 
 import {
   getDefectDensity,
+  getDefectSeverityIndex,
   getJiraBugs30Days,
   getJiraBugs30DaysDev,
   getJiraBugs30DaysProd,
@@ -45,6 +46,7 @@ export default function Index() {
     jiraStories30Days,
     defectDensity,
     defectResolutionTime,
+    defectseverityindex,
   } = useLoaderData<typeof loader>();
 
   return (
@@ -98,7 +100,7 @@ export default function Index() {
           <Await resolve={defectResolutionTime}>
             {(defectResolutionTime) => (
               <CountVisualWithTooltip
-                chartName="Defect Resolution Time"
+                chartName="Defect Resolution Time (Days)"
                 count={parseFloat(defectResolutionTime.toFixed(2))}
                 tooltip="Defect closure date minus defect creation date. Average number of days taken to fix bugs"
               />
@@ -121,16 +123,17 @@ export default function Index() {
         <Suspense fallback={<p>Loading Data.......</p>}>
           <Await resolve={jiraStories30Days}>
             {(jiraStories30Days) => (
-              <CountVisual
+              <CountVisualWithLink
                 chartName="Total Stories Completed"
                 count={jiraStories30Days.totalJiraIssues}
+                page="/stories"
               />
             )}
           </Await>
         </Suspense>
       </div>
 
-      <div className="grid grid-cols-3 py-20">
+      <div className="grid grid-cols-4 py-20">
         <Suspense fallback={<p>Loading Data.......</p>}>
           <Await resolve={jiraDefects30Days}>
             {(jiraDefects30Days) => (
@@ -166,6 +169,18 @@ export default function Index() {
             )}
           </Await>
         </Suspense>
+
+        <Suspense fallback={<p>Loading Data.......</p>}>
+          <Await resolve={defectseverityindex}>
+            {(defectseverityindex) => (
+              <CountVisualWithLink
+                chartName="Defect Severity Index"
+                count={parseFloat(defectseverityindex)}
+                page="/defectseverityindex"
+              />
+            )}
+          </Await>
+        </Suspense>
       </div>
     </>
   );
@@ -194,6 +209,8 @@ export async function loader() {
     jiraDefectsResolved30Days
   );
 
+  const defectseverityindex = getDefectSeverityIndex(jiraDefects30Days);
+
   return defer({
     testRuns,
     jiraDefects30Days,
@@ -203,5 +220,6 @@ export async function loader() {
     jiraStories30Days,
     defectDensity,
     defectResolutionTime,
+    defectseverityindex,
   });
 }

@@ -28,6 +28,7 @@ export default function Breakdowns() {
     smokeTests,
     unitTests,
     nonFunctionalTests,
+    otherTests,
   } = useLoaderData<typeof loader>();
   return (
     <>
@@ -56,25 +57,25 @@ export default function Breakdowns() {
           chartName="Accessibility Tests"
           count={accessibilityTests.count}
           percentage={accessibilityTests.percentage}
-          page="/accessibilitytests"
+          page={`/tests/1`}
         />
         <CountPercentageVisual
           chartName="Data Validation Tests"
           count={dataValidationTests.count}
           percentage={dataValidationTests.percentage}
-          page="/datavalidationtests"
+          page={`/tests/2`}
         />
         <CountPercentageVisual
           chartName="E2E Tests"
           count={e2eTests.count}
           percentage={e2eTests.percentage}
-          page="/e2etests"
+          page={`/tests/3`}
         />
         <CountPercentageVisual
           chartName="Functional Tests"
           count={functionalTests.count}
           percentage={functionalTests.percentage}
-          page="/functionaltests"
+          page={`/tests/4`}
         />
       </div>
 
@@ -83,52 +84,58 @@ export default function Breakdowns() {
           chartName="Integration Tests"
           count={integrationTests.count}
           percentage={integrationTests.percentage}
-          page="/integrationtests"
+          page={`/tests/5`}
         />
         <CountPercentageVisual
           chartName="Performance Tests"
           count={performanceTests.count}
           percentage={performanceTests.percentage}
-          page="/performancetests"
+          page={`/tests/6`}
         />
         <CountPercentageVisual
           chartName="Load Tests"
           count={loadTests.count}
           percentage={loadTests.percentage}
-          page="/loadtests"
+          page={`/tests/7`}
         />
         <CountPercentageVisual
           chartName="Regression Tests"
           count={regressionTests.count}
           percentage={regressionTests.percentage}
-          page="/regressiontests"
+          page={`/tests/8`}
         />
       </div>
 
-      <div className="grid grid-cols-4 py-10 border-2 border-b-8">
+      <div className="grid grid-cols-5 py-10 border-2 border-b-8">
         <CountPercentageVisual
           chartName="Security Tests"
           count={securityTests.count}
           percentage={securityTests.percentage}
-          page="/securitytests"
+          page={`/tests/9`}
         />
         <CountPercentageVisual
           chartName="Smoke Tests"
           count={smokeTests.count}
           percentage={smokeTests.percentage}
-          page="/smoketests"
+          page={`/tests/10`}
         />
         <CountPercentageVisual
           chartName="Unit Tests"
           count={unitTests.count}
           percentage={unitTests.percentage}
-          page="/unittests"
+          page={`/tests/11`}
         />
         <CountPercentageVisual
           chartName="Non-Functional Tests"
           count={nonFunctionalTests.count}
           percentage={nonFunctionalTests.percentage}
-          page="/nonfunctionaltests"
+          page={`/tests/12`}
+        />
+        <CountPercentageVisual
+          chartName="Other Tests"
+          count={otherTests.count}
+          percentage={otherTests.percentage}
+          page={`/tests/13`}
         />
       </div>
     </>
@@ -211,6 +218,9 @@ export async function loader() {
     totalTestCases
   );
 
+  const otherTests = getTestTypeTests(testCaseData, 13);
+  const otherTestPercentage = getPercentage(otherTests.length, totalTestCases);
+
   return {
     totalTestCases,
     automatedTests: {
@@ -283,6 +293,11 @@ export async function loader() {
       data: nonFunctionalTests,
       count: nonFunctionalTests.length,
       percentage: nonFunctionalTestPercentage,
+    },
+    otherTests: {
+      data: otherTests,
+      count: otherTests.length,
+      percentage: otherTestPercentage,
     },
   };
 }

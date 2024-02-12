@@ -13,6 +13,7 @@ export default function BugCharts() {
     prodBugData,
     resolutionTimeData,
     storiesResolved,
+    defectSeverityIndex,
   } = useLoaderData<typeof loader>();
   return (
     <>
@@ -73,6 +74,11 @@ export default function BugCharts() {
             Stories Resolved
           </h2>
           <StarbaseLineChart chartData={storiesResolved} />
+
+          <h2 className="text-center text-2xl py-5 underline">
+            Defect Severity Index
+          </h2>
+          <StarbaseLineChart chartData={defectSeverityIndex} />
         </>
       )}
     </>
@@ -119,6 +125,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
       bugs: bugs.stories_resolved,
     };
   });
+  const defectSeverityIndex = metrics.map((bugs: any) => {
+    return {
+      name: `${bugs.month}`,
+      bugs: bugs.defect_severity_index,
+    };
+  });
 
   return {
     years,
@@ -127,5 +139,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
     prodBugData,
     resolutionTimeData,
     storiesResolved,
+    defectSeverityIndex,
   };
 }

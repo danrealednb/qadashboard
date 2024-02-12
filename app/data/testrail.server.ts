@@ -37,7 +37,7 @@ export async function getCurrentTestRuns() {
   //     { headers }
   //   );
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_runs/1&is_completed=0`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_runs/${process.env.TEST_RAIL_PROJECT_ID}&is_completed=0`,
     { headers }
   );
   const data = await res.json();
@@ -98,7 +98,7 @@ export async function getTestCasesFromTestRail(offset: number = 0) {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
   };
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/1&suite_id=1&offset=${offset}`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${process.env.TEST_RAIL_PROJECT_ID}&suite_id=1&offset=${offset}`,
     { headers }
   );
   const data = await res.json();
@@ -121,7 +121,7 @@ export async function getAllTestCases() {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
   };
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/1&suite_id=1`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${process.env.TEST_RAIL_PROJECT_ID}&suite_id=1`,
     { headers }
   );
   const data = await res.json();
@@ -287,7 +287,7 @@ export async function getTestCasesFromTestRailV2(offset: number = 0) {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
   };
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/1&suite_id=1&offset=${offset}`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${process.env.TEST_RAIL_PROJECT_ID}&suite_id=1&offset=${offset}`,
     { headers }
   );
   const data = await res.json();
@@ -385,3 +385,85 @@ export const getJiraRefTestsV2 = (
   }
   return testCoverage;
 };
+
+export const getJiraRefTestsV3 = (
+  jiraStories: Array<JIRA_ISSUE_STORY_DATA>,
+  testCases: Array<TEST_CASE>
+) => {
+  const testCoverage: Array<TEST_COVERAGE> = [];
+  for (let index = 0; index < jiraStories.length; index++) {
+    const element = jiraStories[index];
+    const tests = testCases.filter((test: TEST_CASE) =>
+      test.refs?.split(",").includes(element.key)
+    );
+
+    const newTest: Array<TEST_CASE_STR> = tests.map((t: TEST_CASE) => {
+      return {
+        id: t.id,
+        title: t.title,
+        refs: t.refs,
+        custom_automated_test: t.custom_automated_test,
+        custom_test_case_type: t.custom_test_case_type
+          ? getTestTypesToStr(t.custom_test_case_type)
+          : ["Other"],
+      };
+    });
+
+    const obj: TEST_COVERAGE = {
+      key: element.key,
+      title: element.title,
+      startDate: element.startDate,
+      completeDate: element.completeDate,
+      coverage: tests.length > 0 ? true : false,
+      tests: newTest,
+    };
+    testCoverage.push(obj);
+  }
+  return testCoverage;
+};
+
+export async function getCustomTestCaseTypes() {
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_fields`,
+    { headers }
+  );
+  const data = await res.json();
+  //   const numberOfTestCaseResultsInRun = data.size;
+  //   console.log(numberOfTestCaseResultsInRun);
+  //   console.log(data.results.length);
+  const testCaseTypes = data.filter(
+    (tct: any) => tct.name === "test_case_type"
+  );
+
+  const tcs = testCaseTypes[0].configs[0].options.items.split("\n");
+  // console.log(tcs);
+
+  const testCaseTypesList = [];
+  for (const casetype of tcs) {
+    const tctype = casetype.split(", ");
+    const obj = {
+      testCaseTypeId: tctype[0],
+      testCaseType: tctype[1],
+    };
+    testCaseTypesList.push(obj);
+    // console.log(obj);
+  }
+
+  return testCaseTypesList;
+}
+
+export async function getTestCaseTypes() {
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_types`,
+    { headers }
+  );
+  const data = await res.json();
+
+  return data;
+}

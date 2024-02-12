@@ -3,12 +3,8 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { DateTime } from "luxon";
 import Header from "~/components/Header";
 import StarbaseLineChartTests from "~/components/LineChartTests";
-import {
-  TEST_TYPES,
-  getTestTypeMetrics,
-  testTypeMappingDB,
-  years,
-} from "~/data/db.server";
+import { getTestTypeMetrics, testTypeMappingDB, years } from "~/data/db.server";
+import { getCustomTestCaseTypes } from "~/data/testrail.server";
 
 export default function TestTypeCharts() {
   const { testTypes, chartData, years, testTypeTitle } =
@@ -48,8 +44,8 @@ export default function TestTypeCharts() {
           >
             {testTypes.map((tt) => {
               return (
-                <option key={tt} value={tt}>
-                  {tt}
+                <option key={tt.testCaseTypeId} value={tt.testCaseType}>
+                  {tt.testCaseType}
                 </option>
               );
             })}
@@ -98,7 +94,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
     };
   });
 
-  const testTypes = TEST_TYPES;
+  // const testTypes = TEST_TYPES;
+
+  const testTypes = await getCustomTestCaseTypes();
+  testTypes.unshift({ testCaseTypeId: 97, testCaseType: "Manual" });
+  testTypes.unshift({ testCaseTypeId: 98, testCaseType: "Automated" });
+  testTypes.unshift({ testCaseTypeId: 99, testCaseType: "Total" });
 
   return { testTypes, chartData, years, testTypeTitle };
 }
