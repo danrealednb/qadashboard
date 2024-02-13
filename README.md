@@ -52,6 +52,15 @@ TEST_RAIL_INSTANCE=instance_name.testrail.io
 TEST_RAIL_API_KEY=apikey
 JIRA_CREDENTIALS=email/apikey
 DATABASE_PATH=./qa.db
+JIRA_INSTANCE=company.atlassian.net
+JIRA_PROJECT=Abbreviation
+TEST_RAIL_PROJECT_ID=1
 ```
 
 - Do not use quotes or double quotes in .env file. Docker treats those as characters
+
+#### Setup
+
+Go to `app/utils/testTypes.ts` and add in the test types
+
+Assumes that the test rail instance has fields `custom_automated_test` and `custom_test_case_type`

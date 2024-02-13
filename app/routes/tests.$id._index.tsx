@@ -7,6 +7,7 @@ import {
   getTestCasesFromTestRail,
   getTestTypeTests,
 } from "~/data/testrail.server";
+import { testTypeMapping } from "~/utils/testTypes";
 
 export default function TestsForType() {
   const { testData, headerTestType } = useLoaderData<typeof loader>();
@@ -36,10 +37,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
   //   const testCaseTypes = await getTestCaseTypes();
   //   console.log("Test Case Types", testCaseTypes);
 
-  const customTestCaseTypes = await getCustomTestCaseTypes();
-  const headerTestType = customTestCaseTypes.filter(
-    (tct) => tct.testCaseTypeId === params.id
-  );
+  // const customTestCaseTypes = await getCustomTestCaseTypes();
+  // const headerTestType = customTestCaseTypes.filter(
+  //   (tct) => tct.testCaseTypeId === params.id
+  // );
+
+  const headerTestType = testTypeMapping(parseInt(testTypeId!!));
 
   return { testData, headerTestType };
 }
