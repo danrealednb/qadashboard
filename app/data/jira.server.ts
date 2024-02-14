@@ -359,9 +359,10 @@ export async function getJiraDefectResolutionTime(
 }
 
 export async function getJiraFeatures(
+  jiraProject: string,
   status: "to do" | "in progress" | "done"
 ) {
-  const query = `project=${process.env.JIRA_PROJECT}%26issuetype=Epic%26status="${status}"&fields=id.key,summary,issuetype,resolutiondate,created&maxResults=100`;
+  const query = `project=${jiraProject}%26issuetype=Epic%26status="${status}"&fields=id.key,summary,issuetype,resolutiondate,created&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -402,8 +403,8 @@ export async function getJiraFeatures(
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraFeatureStories(epic: string) {
-  const query = `project=${process.env.JIRA_PROJECT}%26"Epic Link"=${epic}&fields=id.key,summary,issuetype,customfield_10010,priority&maxResults=100`;
+export async function getJiraFeatureStories(jiraProject: string, epic: string) {
+  const query = `project=${jiraProject}%26"Epic Link"=${epic}&fields=id.key,summary,issuetype,customfield_10010,priority&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -445,8 +446,8 @@ export async function getJiraFeatureStories(epic: string) {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraFeature(epic: string) {
-  const query = `project=${process.env.JIRA_PROJECT}%26issuetype=Epic%26issue=${epic}&fields=id.key,summary,issuetype,resolutiondate,created,description&maxResults=100`;
+export async function getJiraFeature(jiraProject: string, epic: string) {
+  const query = `project=${jiraProject}%26issuetype=Epic%26issue=${epic}&fields=id.key,summary,issuetype,resolutiondate,created,description&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,

@@ -69,38 +69,42 @@ export default function TestList({
 
   return (
     <>
-      <div className="flex justify-center">
-        <table className="">
-          <thead>
-            <tr className="text-center border-2 border-gray-900">
-              <th className="border-r-2 border-gray-900 px-2 py-1">Title</th>
-              <th className="border-r-2 border-gray-900 px-2 py-1">Refs</th>
-              <th className="px-2 py-1">Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {testCases.map((test: TEST_CASE) => (
-              <tr className="text-center border-2 border-gray-200">
-                <td className="border-r-2 px-2 py-1">{test.title}</td>
-                {/* <td className="border-r-2 px-2 py-1">{test.refs}</td> */}
-                {test.refs && (
-                  <td className="border-r-2 px-2 py-1">
-                    {getTestRefsToLinks(test.refs)}
-                  </td>
-                )}
-                {!test.refs && <td className="border-r-2 px-2 py-1"></td>}
-                {/* <td className="px-2 py-1">{test.custom_test_case_type}</td> */}
-                {test.custom_test_case_type && (
-                  <td className="px-2 py-1">
-                    {getTestTypesToStr(test.custom_test_case_type)}
-                  </td>
-                )}
-                {!test.custom_test_case_type && <td className="px-2 py-1"></td>}
+      {testCases.length > 0 && (
+        <div className="flex justify-center">
+          <table className="">
+            <thead>
+              <tr className="text-center border-2 border-gray-900">
+                <th className="border-r-2 border-gray-900 px-2 py-1">Title</th>
+                <th className="border-r-2 border-gray-900 px-2 py-1">Refs</th>
+                <th className="px-2 py-1">Type</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {testCases.map((test: TEST_CASE) => (
+                <tr className="text-center border-2 border-gray-200">
+                  <td className="border-r-2 px-2 py-1">{test.title}</td>
+                  {/* <td className="border-r-2 px-2 py-1">{test.refs}</td> */}
+                  {test.refs && (
+                    <td className="border-r-2 px-2 py-1">
+                      {getTestRefsToLinks(test.refs)}
+                    </td>
+                  )}
+                  {!test.refs && <td className="border-r-2 px-2 py-1"></td>}
+                  {/* <td className="px-2 py-1">{test.custom_test_case_type}</td> */}
+                  {test.custom_test_case_type && (
+                    <td className="px-2 py-1">
+                      {getTestTypesToStr(test.custom_test_case_type)}
+                    </td>
+                  )}
+                  {!test.custom_test_case_type && (
+                    <td className="px-2 py-1"></td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </>
   );
 }

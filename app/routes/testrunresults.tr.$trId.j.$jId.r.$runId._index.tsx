@@ -12,7 +12,7 @@ export default function TestRunResults() {
   const params = useParams();
   return (
     <>
-      <Header testRailProjectId={params.id} />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">Test Run Results</h1>
       <h2 className="text-center text-2xl pb-5 text-blue-500">
         {testRunData.length}

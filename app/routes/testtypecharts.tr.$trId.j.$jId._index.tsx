@@ -14,10 +14,10 @@ export default function TestTypeCharts() {
 
   return (
     <>
-      <Header testRailProjectId={params.id} />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">Test Type Charts</h1>
       <div className="flex justify-center">
-        <Form className="grid justify-center space-y-5">
+        <Form className="grid justify-center space-y-5" method="GET">
           <label htmlFor="" className="font-bold text-center">
             Select Year
           </label>
@@ -79,14 +79,19 @@ export default function TestTypeCharts() {
 }
 
 export async function loader({ request, params }: LoaderFunctionArgs) {
-  const testRailProjectId = params.id;
+  const testRailProjectId = params.trId;
+  const jiraProjectId = params.jId;
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
 
   const year = search.get("year") || DateTime.now().year.toString();
   const testType = search.get("testType") || "Total";
   const testTypeTitle = testType;
-  const dbTestTypeMetrics = await getTestTypeMetrics(year);
+  const dbTestTypeMetrics = await getTestTypeMetrics(
+    testRailProjectId,
+    jiraProjectId,
+    year
+  );
 
   const dbTestType = testTypeMappingDB(testRailProjectId, testType);
 

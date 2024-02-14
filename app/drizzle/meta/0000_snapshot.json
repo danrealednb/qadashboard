@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "a6b993fc-d424-41cb-8741-b765f3b9d6a6",
+  "id": "e8bae0a5-f75b-472a-a108-449e06abb789",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "bugs": {
@@ -11,6 +11,20 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "test_rail_project_id": {
+          "name": "test_rail_project_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "jira_project_id": {
+          "name": "jira_project_id",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
@@ -99,6 +113,20 @@
           "name": "id",
           "type": "integer",
           "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "test_rail_project_id": {
+          "name": "test_rail_project_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "jira_project_id": {
+          "name": "jira_project_id",
+          "type": "text",
+          "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from "~/data/config.server";
 import { tests } from "~/data/schema.tests.server";
 import { bugs } from "~/data/schema.bugs.server";
@@ -68,12 +68,40 @@ export const testTypeMappingDB = (testType: string) => {
 
 export const years = ["2023", "2024", "2025"];
 
-export async function getBugMetrics(year: string) {
-  const metrics = db.select().from(bugs).where(eq(bugs.year, year)).all();
+export async function getBugMetrics(
+  testRailProjectId: string,
+  jiraProjectId: string,
+  year: string
+) {
+  const metrics = db
+    .select()
+    .from(bugs)
+    .where(
+      and(
+        eq(bugs.test_rail_project_id, parseInt(testRailProjectId)),
+        eq(bugs.jira_project_id, jiraProjectId),
+        eq(bugs.year, year)
+      )
+    )
+    .all();
   return metrics;
 }
 
-export async function getTestTypeMetrics(year: string) {
-  const metrics = db.select().from(tests).where(eq(tests.year, year)).all();
+export async function getTestTypeMetrics(
+  testRailProjectId: string,
+  jiraProjectId: string,
+  year: string
+) {
+  const metrics = db
+    .select()
+    .from(tests)
+    .where(
+      and(
+        eq(tests.test_rail_project_id, parseInt(testRailProjectId)),
+        eq(tests.jira_project_id, jiraProjectId),
+        eq(tests.year, year)
+      )
+    )
+    .all();
   return metrics;
 }

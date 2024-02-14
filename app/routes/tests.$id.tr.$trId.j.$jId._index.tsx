@@ -14,11 +14,19 @@ export default function TestsForType() {
   const params = useParams();
   return (
     <>
-      <Header testRailProjectId={params.id} />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">{headerTestType}</h1>
-      <h2 className="text-center text-2xl pb-5 text-blue-500">
-        {testData.length}
-      </h2>
+      {testData.length > 0 && (
+        <h2 className="text-center text-2xl pb-5 text-blue-500">
+          {testData.length}
+        </h2>
+      )}
+      {testData.length == 0 && (
+        <h2 className="text-center text-2xl pb-5 text-blue-500">
+          No Test Cases
+        </h2>
+      )}
+
       <TestList testCases={testData} />
     </>
   );

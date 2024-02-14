@@ -1,6 +1,8 @@
 import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 export const tests = sqliteTable("tests", {
   id: integer("id").primaryKey(),
+  test_rail_project_id: integer("test_rail_project_id").notNull(),
+  jira_project_id: text("jira_project_id").notNull(),
   month: text("month", {
     enum: [
       "Jan",

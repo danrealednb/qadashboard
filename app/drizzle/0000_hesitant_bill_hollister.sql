@@ -1,5 +1,7 @@
 CREATE TABLE `bugs` (
 	`id` integer PRIMARY KEY NOT NULL,
+	`test_rail_project_id` integer NOT NULL,
+	`jira_project_id` text NOT NULL,
 	`month` text NOT NULL,
 	`year` text NOT NULL,
 	`total_bugs` integer NOT NULL,
@@ -14,6 +16,8 @@ CREATE TABLE `bugs` (
 --> statement-breakpoint
 CREATE TABLE `tests` (
 	`id` integer PRIMARY KEY NOT NULL,
+	`test_rail_project_id` integer NOT NULL,
+	`jira_project_id` text NOT NULL,
 	`month` text NOT NULL,
 	`year` text NOT NULL,
 	`total_tests` integer NOT NULL,

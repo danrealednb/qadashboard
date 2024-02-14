@@ -21,7 +21,8 @@ export default function StarbasePieChart({
   retest,
   untested,
   testRunId,
-  projectId,
+  testRailProjectId,
+  jiraProjectId,
 }: {
   chartName: string;
   passed: number;
@@ -30,7 +31,8 @@ export default function StarbasePieChart({
   retest: number;
   untested: number;
   testRunId: number;
-  projectId: string;
+  testRailProjectId: string;
+  jiraProjectId: string;
 }) {
   // const chartData = testRunChartData(runData);
   // console.log(chartData);
@@ -75,7 +77,9 @@ export default function StarbasePieChart({
             dominantBaseline="central"
           >
             <tspan fontSize="20" className="font-bold">
-              <Link to={`/testrunresults/${projectId}/${testRunId}`}>
+              <Link
+                to={`/testrunresults/tr/${testRailProjectId}/j/${jiraProjectId}/r/${testRunId}`}
+              >
                 {chartName}
               </Link>
             </tspan>

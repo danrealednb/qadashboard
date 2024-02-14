@@ -15,11 +15,18 @@ export default function AutomatedTests() {
   const params = useParams();
   return (
     <>
-      <Header testRailProjectId={params.id} />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">Automated Tests</h1>
-      <h2 className="text-center text-2xl pb-5 text-blue-500">
-        {automatedTests.length}
-      </h2>
+      {automatedTests.length > 0 && (
+        <h2 className="text-center text-2xl pb-5 text-blue-500">
+          {automatedTests.length}
+        </h2>
+      )}
+      {automatedTests.length == 0 && (
+        <h2 className="text-center text-2xl pb-5 text-blue-500">
+          No Test Cases
+        </h2>
+      )}
       <TestList testCases={automatedTests} />
     </>
   );
@@ -28,7 +35,7 @@ export default function AutomatedTests() {
 export async function loader({ params }: LoaderFunctionArgs) {
   // const testCaseData = await getAllTestCases();
   //   console.log(testCaseData);
-  const testRailProjectId = params.id;
+  const testRailProjectId = params.trId;
 
   const testCaseData = await getTestCasesFromTestRail(testRailProjectId, 0);
 
