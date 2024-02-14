@@ -23,8 +23,8 @@ export interface JIRA_ISSUE_FEATURE_DATA {
   resolutionDate: string;
 }
 
-export async function getJiraBugs30Days() {
-  const query = `project=${process.env.JIRA_PROJECT}%26issuetype=Bug%26created>=-30d&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
+export async function getJiraBugs30Days(jiraProject: string) {
+  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -66,8 +66,8 @@ export async function getJiraBugs30Days() {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraBugs30DaysProd() {
-  const query = `project=${process.env.JIRA_PROJECT}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
+export async function getJiraBugs30DaysProd(jiraProject: string) {
+  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -108,8 +108,8 @@ export async function getJiraBugs30DaysProd() {
 
   return { totalJiraIssues, jiraData };
 }
-export async function getJiraBugs30DaysDev() {
-  const query = `project=${process.env.JIRA_PROJECT}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
+export async function getJiraBugs30DaysDev(jiraProject: string) {
+  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -151,8 +151,8 @@ export async function getJiraBugs30DaysDev() {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraStories30Days() {
-  const query = `project=${process.env.JIRA_PROJECT}%26issuetype=Story%26resolved>=-30d&fields=id.key,summary&maxResults=100`;
+export async function getJiraStories30Days(jiraProject: string) {
+  const query = `project=${jiraProject}%26issuetype=Story%26resolved>=-30d&fields=id.key,summary&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -191,8 +191,8 @@ export async function getJiraStories30Days() {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getResolvedJiraBugs30Days() {
-  const query = `project=${process.env.JIRA_PROJECT}%26issuetype=Bug%26resolved>=-30d&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
+export async function getResolvedJiraBugs30Days(jiraProject: string) {
+  const query = `project=${jiraProject}%26issuetype=Bug%26resolved>=-30d&fields=id.key,summary,created,resolutiondate,priority&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -238,21 +238,25 @@ export async function getDefectResolutionTime(
   jiraBugData: Array<JIRA_ISSUE_DATA>
 ) {
   let bugDays: Array<number> = [];
-  for (let index = 0; index < jiraBugData.length; index++) {
-    const startDate = jiraBugData[index].startDate;
-    const completeDateDate = jiraBugData[index].completeDate;
+  if (jiraBugData.length > 0) {
+    for (let index = 0; index < jiraBugData.length; index++) {
+      const startDate = jiraBugData[index].startDate;
+      const completeDateDate = jiraBugData[index].completeDate;
 
-    const date1 = DateTime.fromISO(completeDateDate);
-    const date2 = DateTime.fromISO(startDate);
+      const date1 = DateTime.fromISO(completeDateDate);
+      const date2 = DateTime.fromISO(startDate);
 
-    const diff = date1.diff(date2, "days");
+      const diff = date1.diff(date2, "days");
 
-    const diffObj = diff.toObject();
+      const diffObj = diff.toObject();
 
-    bugDays.push(diffObj.days as number);
+      bugDays.push(diffObj.days as number);
+    }
+    const average = bugDays.reduce((a, b) => a + b) / bugDays.length;
+    return average;
+  } else {
+    return 0;
   }
-  const average = bugDays.reduce((a, b) => a + b) / bugDays.length;
-  return average;
 }
 
 export async function getTestCaseEffectiveness(
@@ -272,8 +276,12 @@ export async function getDefectDensity(
 ) {
   const bugs = (await thirtyDaysBugs).totalJiraIssues;
   const stories = (await thirtyDaysStories).totalJiraIssues;
-  const defectDensity = ((bugs / stories) * 100).toFixed(2);
-  return defectDensity;
+  if (bugs === 0 && stories === 0) {
+    return "0";
+  } else {
+    const defectDensity = ((bugs / stories) * 100).toFixed(2);
+    return defectDensity;
+  }
 }
 export async function getDefectSeverityIndex(
   jiraDefects30Days: Promise<{
@@ -296,14 +304,18 @@ export async function getDefectSeverityIndex(
   const lowBugs = bugs.filter(
     (issue: JIRA_ISSUE_DATA) => issue.severity === "Low"
   );
-  const defectSeverityIndex = (
-    (criticalBugs.length * 10 +
-      highBugs.length * 5 +
-      mediumBugs.length * 3 +
-      lowBugs.length * 2) /
-    bugsCount
-  ).toFixed(2);
-  return defectSeverityIndex;
+  if (bugsCount === 0) {
+    return "0";
+  } else {
+    const defectSeverityIndex = (
+      (criticalBugs.length * 10 +
+        highBugs.length * 5 +
+        mediumBugs.length * 3 +
+        lowBugs.length * 2) /
+      bugsCount
+    ).toFixed(2);
+    return defectSeverityIndex;
+  }
 }
 export async function getDefectSeverityIndexMonthly(jiraDefects30Days: {
   totalJiraIssues: number;
@@ -324,14 +336,18 @@ export async function getDefectSeverityIndexMonthly(jiraDefects30Days: {
   const lowBugs = bugs.filter(
     (issue: JIRA_ISSUE_DATA) => issue.severity === "Low"
   );
-  const defectSeverityIndex = (
-    (criticalBugs.length * 10 +
-      highBugs.length * 5 +
-      mediumBugs.length * 3 +
-      lowBugs.length * 2) /
-    bugsCount
-  ).toFixed(2);
-  return defectSeverityIndex;
+  if (bugsCount === 0) {
+    return 0;
+  } else {
+    const defectSeverityIndex = (
+      (criticalBugs.length * 10 +
+        highBugs.length * 5 +
+        mediumBugs.length * 3 +
+        lowBugs.length * 2) /
+      bugsCount
+    ).toFixed(2);
+    return defectSeverityIndex;
+  }
 }
 
 export async function getJiraDefectResolutionTime(
@@ -452,5 +468,28 @@ export async function getJiraFeature(epic: string) {
     method: "GET",
   });
 
+  return response.data;
+}
+export async function getJiraProjects() {
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/project`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
   return response.data;
 }

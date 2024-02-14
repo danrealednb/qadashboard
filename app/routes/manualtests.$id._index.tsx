@@ -1,4 +1,5 @@
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import TestList from "~/components/TestList";
 import {
@@ -9,9 +10,10 @@ import {
 
 export default function ManualTests() {
   const { manualTests } = useLoaderData<typeof loader>();
+  const params = useParams();
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.id} />
       <h1 className="text-center text-2xl py-5 underline">Manual Tests</h1>
       <h2 className="text-center text-2xl pb-5 text-blue-500">
         {manualTests.length}
@@ -21,11 +23,12 @@ export default function ManualTests() {
   );
 }
 
-export async function loader() {
+export async function loader({ params }: LoaderFunctionArgs) {
   // const testCaseData = await getAllTestCases();
   //   console.log(testCaseData);
+  const testRailProjectId = params.id;
 
-  const testCaseData = await getTestCasesFromTestRail(0);
+  const testCaseData = await getTestCasesFromTestRail(testRailProjectId, 0);
 
   const manualTests = getManualTests(testCaseData);
   //   console.log(manualTests);

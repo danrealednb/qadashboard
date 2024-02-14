@@ -1,7 +1,11 @@
 import { Link } from "@remix-run/react";
 import { FaUserAstronaut } from "react-icons/fa6";
 
-export default function Header() {
+export default function Header({
+  testRailProjectId,
+}: {
+  testRailProjectId: string;
+}) {
   return (
     <>
       <header>
@@ -20,7 +24,7 @@ export default function Header() {
             </li>
             <li key={2}>
               <Link
-                to="/breakdown"
+                to={`/breakdown/${testRailProjectId}`}
                 className="underline"
                 data-testid="breakdownLink"
               >
@@ -29,7 +33,7 @@ export default function Header() {
             </li>
             <li key={3}>
               <Link
-                to="/bugcharts"
+                to={`/bugcharts/${testRailProjectId}`}
                 className="underline"
                 data-testid="bugchartsLink"
               >
@@ -38,7 +42,7 @@ export default function Header() {
             </li>
             <li key={4}>
               <Link
-                to="/testtypecharts"
+                to={`/testtypecharts/${testRailProjectId}`}
                 className="underline"
                 data-testid="testtypechartsLink"
               >

@@ -1,5 +1,11 @@
-import { type MetaFunction } from "@remix-run/node";
-import { useLoaderData, Await, Link } from "@remix-run/react";
+import { LoaderFunctionArgs, type MetaFunction } from "@remix-run/node";
+import {
+  useLoaderData,
+  Await,
+  Link,
+  Form,
+  useSearchParams,
+} from "@remix-run/react";
 import CountVisualWithLink from "~/components/ChartVisualWithLink";
 import CountVisual from "~/components/CountVisual";
 import CountVisualWithTooltip from "~/components/CountVisualWithToolTip";
@@ -16,12 +22,14 @@ import {
   getJiraBugs30DaysDev,
   getJiraBugs30DaysProd,
   getJiraDefectResolutionTime,
+  getJiraProjects,
   getJiraStories30Days,
   getResolvedJiraBugs30Days,
   getTestCaseEffectiveness,
 } from "~/data/jira.server";
 import {
   getCurrentTestRuns,
+  getTestRailProjects,
   getTotalTestsExecuted,
   TEST_RUN_DATA,
 } from "~/data/testrail.server";
@@ -47,13 +55,72 @@ export default function Index() {
     defectDensity,
     defectResolutionTime,
     defectseverityindex,
+    jiraProjects,
+    testRailProjects,
   } = useLoaderData<typeof loader>();
+  const [params] = useSearchParams();
 
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.get("testRailProject") || "4"} />
 
-      <div className="grid grid-cols-4">
+      <div className="flex justify-center items-center text-center pt-2">
+        <Form className="grid space-y-2">
+          <label htmlFor="" className="font-bold">
+            Jira Project
+          </label>
+          <Suspense fallback={<p>Loading Jira Projects.......</p>}>
+            <Await resolve={jiraProjects}>
+              {(jiraProjects) => (
+                <select
+                  name="jiraProject"
+                  id="jiraProject"
+                  data-testid="jiraProject"
+                  className="border-blue-600 border-2 rounded-full px-2 py-1"
+                  defaultValue={params.get("jiraProject") || "PLAT"}
+                >
+                  {jiraProjects.map((project: any) => (
+                    <option key={project.id} value={project.key}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </Await>
+          </Suspense>
+
+          <label htmlFor="" className="font-bold">
+            Test Rail Project
+          </label>
+          <Suspense fallback={<p>Loading Test Rail Projects.......</p>}>
+            <Await resolve={testRailProjects}>
+              {(testRailProjects) => (
+                <select
+                  name="testRailProject"
+                  id="testRailProject"
+                  data-testid="testRailProject"
+                  className="border-green-700 border-2 rounded-full px-2 py-1"
+                  defaultValue={params.get("testRailProject") || "4"}
+                >
+                  {testRailProjects.projects.map((project: any) => (
+                    <option key={project.id} value={project.id}>
+                      {project.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </Await>
+          </Suspense>
+
+          <div className="py-5">
+            <button className="border-4 border-red-600 rounded-full px-2 py-1">
+              Load Metrics
+            </button>
+          </div>
+        </Form>
+      </div>
+
+      <div className="grid grid-cols-4 gap-4">
         <Suspense fallback={<p>Loading Data.......</p>}>
           <Await resolve={testRuns}>
             {(testRuns) => (
@@ -67,6 +134,7 @@ export default function Index() {
                     retest={run.retest}
                     untested={run.untested}
                     testRunId={run.id}
+                    projectId={params.get("testRailProject") || "4"}
                   />
                 ))}
               </>
@@ -101,7 +169,7 @@ export default function Index() {
             {(defectResolutionTime) => (
               <CountVisualWithTooltip
                 chartName="Defect Resolution Time (Days)"
-                count={parseFloat(defectResolutionTime.toFixed(2))}
+                count={parseFloat(defectResolutionTime.toFixed(2)) || 0}
                 tooltip="Defect closure date minus defect creation date. Average number of days taken to fix bugs"
               />
             )}
@@ -186,17 +254,29 @@ export default function Index() {
   );
 }
 
-export async function loader() {
-  const testRuns = getCurrentTestRuns();
+export async function loader({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const search = new URLSearchParams(url.search);
+
+  const testRailProjects = getTestRailProjects();
+
+  const selectedTestRailProject = search.get("testRailProject") || "4";
+
+  const jiraProjects = getJiraProjects();
+
+  const selectedJiraProject = search.get("jiraProject") || "PLAT";
+
+  const testRuns = getCurrentTestRuns(selectedTestRailProject);
 
   const totalTestsExecuted = getTotalTestsExecuted(testRuns);
 
-  const jiraDefects30Days = getJiraBugs30Days();
-  const jiraDefects30DaysProd = getJiraBugs30DaysProd();
-  const jiraDefects30DaysDev = getJiraBugs30DaysDev();
-  const jiraStories30Days = getJiraStories30Days();
+  const jiraDefects30Days = getJiraBugs30Days(selectedJiraProject);
+  const jiraDefects30DaysProd = getJiraBugs30DaysProd(selectedJiraProject);
+  const jiraDefects30DaysDev = getJiraBugs30DaysDev(selectedJiraProject);
+  const jiraStories30Days = getJiraStories30Days(selectedJiraProject);
 
-  const jiraDefectsResolved30Days = getResolvedJiraBugs30Days();
+  const jiraDefectsResolved30Days =
+    getResolvedJiraBugs30Days(selectedJiraProject);
 
   const testCaseEffectiveness = getTestCaseEffectiveness(
     jiraDefects30Days,
@@ -221,5 +301,7 @@ export async function loader() {
     defectDensity,
     defectResolutionTime,
     defectseverityindex,
+    jiraProjects,
+    testRailProjects,
   });
 }

@@ -29,7 +29,7 @@ export const testRunChartData = (data: TEST_RUN_DATA) => {
   return chartData;
 };
 
-export async function getCurrentTestRuns() {
+export async function getCurrentTestRuns(projectId: string) {
   const headers = {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
   };
@@ -38,7 +38,7 @@ export async function getCurrentTestRuns() {
   //     { headers }
   //   );
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_runs/${process.env.TEST_RAIL_PROJECT_ID}&is_completed=0`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_runs/${projectId}&is_completed=0`,
     { headers }
   );
   const data = await res.json();
@@ -93,13 +93,16 @@ export interface TEST_CASE_RESULT {
 //   const allTestData: any = [];
 //   await getTestCasesFromTestRail(0);
 // }
-export async function getTestCasesFromTestRail(offset: number = 0) {
+export async function getTestCasesFromTestRail(
+  projectId: string,
+  offset: number = 0
+) {
   const allTestData: any = [];
   const headers = {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
   };
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${process.env.TEST_RAIL_PROJECT_ID}&suite_id=1&offset=${offset}`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${projectId}&suite_id=1&offset=${offset}`,
     { headers }
   );
   const data = await res.json();
@@ -110,19 +113,22 @@ export async function getTestCasesFromTestRail(offset: number = 0) {
     return allTestData;
   } else {
     // need to get more data
-    const offsetTestData = await getTestCasesFromTestRail(offset + 250);
+    const offsetTestData = await getTestCasesFromTestRail(
+      projectId,
+      offset + 250
+    );
     allTestData.push(...fullTestCaseData);
     allTestData.push(...offsetTestData);
     return allTestData;
   }
 }
 
-export async function getAllTestCases() {
+export async function getAllTestCases(projectId: string) {
   const headers = {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
   };
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${process.env.TEST_RAIL_PROJECT_ID}&suite_id=1`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${projectId}&suite_id=1`,
     { headers }
   );
   const data = await res.json();
@@ -210,6 +216,7 @@ export const getTestTypesToStr = (testTypes: Array<number>) => {
 // };
 
 export async function getTestsInTestRun(
+  projectId: string,
   offset: number = 0,
   testRun: string | number
 ) {
@@ -232,7 +239,10 @@ export async function getTestsInTestRun(
     return allTestData;
   } else {
     // need to get more data
-    const offsetTestData = await getTestCasesFromTestRail(offset + 250);
+    const offsetTestData = await getTestCasesFromTestRail(
+      projectId,
+      offset + 250
+    );
     allTestData.push(...fullTestCaseData);
     allTestData.push(...offsetTestData);
     return allTestData;
@@ -282,13 +292,16 @@ export async function getTotalTestsExecuted(
   return totalTestsExecuted;
 }
 
-export async function getTestCasesFromTestRailV2(offset: number = 0) {
+export async function getTestCasesFromTestRailV2(
+  projectId: string,
+  offset: number = 0
+) {
   const allTestData: any = [];
   const headers = {
     Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
   };
   const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${process.env.TEST_RAIL_PROJECT_ID}&suite_id=1&offset=${offset}`,
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_cases/${projectId}&suite_id=1&offset=${offset}`,
     { headers }
   );
   const data = await res.json();
@@ -309,7 +322,10 @@ export async function getTestCasesFromTestRailV2(offset: number = 0) {
     return allTestData;
   } else {
     // need to get more data
-    const offsetTestData = await getTestCasesFromTestRail(offset + 250);
+    const offsetTestData = await getTestCasesFromTestRail(
+      projectId,
+      offset + 250
+    );
     const scrubbedData = fullTestCaseData.map((testCase: TEST_CASE) => {
       return {
         id: testCase.id,
@@ -462,6 +478,19 @@ export async function getTestCaseTypes() {
   };
   const res = await fetch(
     `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_types`,
+    { headers }
+  );
+  const data = await res.json();
+
+  return data;
+}
+
+export async function getTestRailProjects() {
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_projects&is_completed=0`,
     { headers }
   );
   const data = await res.json();
