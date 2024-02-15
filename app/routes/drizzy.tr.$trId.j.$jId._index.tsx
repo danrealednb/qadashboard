@@ -327,7 +327,9 @@ export default function Index() {
         {actionState}
       </label>
 
-      <h1 className="flex justify-center py-5">Tests</h1>
+      <h1 className="flex justify-center py-2 font-bold underline">
+        Tests Log
+      </h1>
       <div className="flex justify-center">
         <ul className="grid justify-center py-2">
           {testData.map((d: SelectTests) => (
@@ -337,7 +339,7 @@ export default function Index() {
           ))}
         </ul>
       </div>
-      <h1 className="flex justify-center py-5">Bugs</h1>
+      <h1 className="flex justify-center py-2 font-bold underline">Bugs Log</h1>
       <div className="flex justify-center">
         <ul className="grid justify-center py-2">
           {bugData.map((d: SelectBugs) => (
