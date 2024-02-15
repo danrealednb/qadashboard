@@ -155,14 +155,14 @@ export default function Index() {
         <div className="grid justify-center text-center space-y-2">
           <label htmlFor="" className="text-xl font-bold">
             <Link
-              to={`/featurecoverage/${jiraProjectId}/tr/${testRailProjectId}`}
+              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}`}
             >
               Feature Test Coverage
             </Link>
           </label>
           <label htmlFor="" className="text-blue-700 font-bold">
             <Link
-              to={`/featurecoverage/${jiraProjectId}/tr/${testRailProjectId}`}
+              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}`}
             >
               Click to learn more
             </Link>

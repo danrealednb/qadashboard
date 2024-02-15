@@ -33,9 +33,7 @@ export default function Stories() {
       <div className="flex justify-center py-5">
         <ul className="grid justify-center space-y-2">
           {testCoverage.length === 0 && (
-            <h4 className="text-purple-600 font-semibold">
-              No Stories Linked to Feature
-            </h4>
+            <h4 className="text-purple-600 font-semibold">No Stories</h4>
           )}
           {testCoverage.map((story: TEST_COVERAGE) => {
             return (
