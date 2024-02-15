@@ -13,6 +13,7 @@ import {
 import { DateTime } from "luxon";
 import Header from "~/components/Header";
 import { db } from "~/data/config.server";
+import { eq, and } from "drizzle-orm";
 import {
   getDefectResolutionTime,
   getDefectSeverityIndexMonthly,
@@ -55,9 +56,29 @@ export async function action({ request, params }: ActionFunctionArgs) {
   return redirect(`/dashboard/tr/${testRailProjectId}/j/${jiraProjectId}`);
 }
 export async function loader({ request, params }: LoaderFunctionArgs) {
+  const testRailProjectId = params.trId;
+  const jiraProjectId = params.jId;
   // use drizzle to get the data
-  const testData = db.select().from(tests).all();
-  const bugData = db.select().from(bugs).all();
+  const testData = db
+    .select()
+    .from(tests)
+    .where(
+      and(
+        eq(tests.test_rail_project_id, parseInt(testRailProjectId)),
+        eq(tests.jira_project_id, jiraProjectId)
+      )
+    )
+    .all();
+  const bugData = db
+    .select()
+    .from(bugs)
+    .where(
+      and(
+        eq(bugs.test_rail_project_id, parseInt(testRailProjectId)),
+        eq(bugs.jira_project_id, jiraProjectId)
+      )
+    )
+    .all();
 
   const testRailProjects = await getTestRailProjects();
 

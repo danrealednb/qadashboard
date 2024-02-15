@@ -473,16 +473,112 @@ export async function getCustomTestCaseTypes() {
 }
 
 export async function getTestCaseTypes() {
-  const headers = {
-    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
-  };
-  const res = await fetch(
-    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_types`,
-    { headers }
-  );
-  const data = await res.json();
+  if (process.env.TEST_CASE_TYPES === "default") {
+    const headers = {
+      Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+    };
+    const res = await fetch(
+      `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_types`,
+      { headers }
+    );
+    const data = await res.json();
+    const testCaseTypesList = [];
+    for (const casetype of data) {
+      const obj = {
+        testCaseTypeId: casetype.id,
+        testCaseType: casetype.name,
+      };
+      testCaseTypesList.push(obj);
+      // console.log(obj);
+    }
 
-  return data;
+    return testCaseTypesList;
+  } else if (process.env.TEST_CASE_TYPES === "custom") {
+    const headers = {
+      Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+    };
+    const res = await fetch(
+      `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_fields`,
+      { headers }
+    );
+    const data = await res.json();
+    //   const numberOfTestCaseResultsInRun = data.size;
+    //   console.log(numberOfTestCaseResultsInRun);
+    //   console.log(data.results.length);
+    const testCaseTypes = data.filter(
+      (tct: any) => tct.name === process.env.CUSTOM_TEST_CASE_TYPE_NAME
+    );
+
+    const tcs = testCaseTypes[0].configs[0].options.items.split("\n");
+    // console.log(tcs);
+
+    const testCaseTypesList = [];
+    for (const casetype of tcs) {
+      const tctype = casetype.split(", ");
+      const obj = {
+        testCaseTypeId: tctype[0],
+        testCaseType: tctype[1],
+      };
+      testCaseTypesList.push(obj);
+      // console.log(obj);
+    }
+
+    return testCaseTypesList;
+  }
+}
+export async function getAutomatedTypes() {
+  if (process.env.TEST_CASE_TYPES === "default") {
+    const headers = {
+      Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+    };
+    const res = await fetch(
+      `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_types`,
+      { headers }
+    );
+    const data = await res.json();
+    const testCaseTypesList = [];
+    for (const casetype of data) {
+      const obj = {
+        testCaseTypeId: casetype.id,
+        testCaseType: casetype.name,
+      };
+      testCaseTypesList.push(obj);
+      // console.log(obj);
+    }
+
+    return testCaseTypesList;
+  } else if (process.env.TEST_CASE_TYPES === "custom") {
+    const headers = {
+      Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+    };
+    const res = await fetch(
+      `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_case_fields`,
+      { headers }
+    );
+    const data = await res.json();
+    //   const numberOfTestCaseResultsInRun = data.size;
+    //   console.log(numberOfTestCaseResultsInRun);
+    //   console.log(data.results.length);
+    const testCaseTypes = data.filter(
+      (tct: any) => tct.name === process.env.CUSTOM_AUTOMATED_STATUS_NAME
+    );
+
+    const tcs = testCaseTypes[0].configs[0].options.items.split("\n");
+    // console.log(tcs);
+
+    const testCaseTypesList = [];
+    for (const casetype of tcs) {
+      const tctype = casetype.split(", ");
+      const obj = {
+        testCaseTypeId: tctype[0],
+        testCaseType: tctype[1],
+      };
+      testCaseTypesList.push(obj);
+      // console.log(obj);
+    }
+
+    return testCaseTypesList;
+  }
 }
 
 export async function getTestRailProjects() {

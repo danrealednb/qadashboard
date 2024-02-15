@@ -54,7 +54,7 @@ export default function Breakdowns() {
           page={`/manualtests/tr/${params.trId}/j/${params.jId}`}
         />
       </div>
-      <div className="grid grid-cols-4 py-10 border-2">
+      <div className="grid grid-cols-4 py-10 border-2 gap-12 border-b-8">
         <CountPercentageVisual
           chartName="Accessibility Tests"
           count={accessibilityTests.count}
@@ -79,9 +79,6 @@ export default function Breakdowns() {
           percentage={functionalTests.percentage}
           page={`/tests/4/tr/${params.trId}/j/${params.jId}`}
         />
-      </div>
-
-      <div className="grid grid-cols-4 py-10 border-2">
         <CountPercentageVisual
           chartName="Integration Tests"
           count={integrationTests.count}
@@ -106,9 +103,6 @@ export default function Breakdowns() {
           percentage={regressionTests.percentage}
           page={`/tests/8/tr/${params.trId}/j/${params.jId}`}
         />
-      </div>
-
-      <div className="grid grid-cols-5 py-10 border-2 border-b-8">
         <CountPercentageVisual
           chartName="Security Tests"
           count={securityTests.count}
