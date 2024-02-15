@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { Form, Link, useLoaderData } from "@remix-run/react";
+import { Form, Link, useLoaderData, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import StarbaseLineChart from "~/components/LineChart";
 import { getBugMetrics, years } from "~/data/db.server";
@@ -15,12 +15,13 @@ export default function BugCharts() {
     storiesResolved,
     defectSeverityIndex,
   } = useLoaderData<typeof loader>();
+  const params = useParams();
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">Bug Charts</h1>
       <div className="flex justify-center">
-        <Form className="grid justify-center space-y-5">
+        <Form className="grid justify-center space-y-5" method="GET">
           <label htmlFor="" className="font-bold text-center">
             Select Year
           </label>
@@ -85,13 +86,15 @@ export default function BugCharts() {
   );
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const testRailProjectId = params.trId;
+  const jiraProjectId = params.jId;
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
 
   const year = search.get("year") || DateTime.now().year.toString();
 
-  const metrics = await getBugMetrics(year);
+  const metrics = await getBugMetrics(testRailProjectId, jiraProjectId, year);
 
   const bugData = metrics.map((bugs: any) => {
     return {

@@ -1,4 +1,5 @@
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs } from "@remix-run/node";
+import { useLoaderData, useParams } from "@remix-run/react";
 import CountPercentageVisual from "~/components/CountPercentageVisual";
 import CountVisual from "~/components/CountVisual";
 import Header from "~/components/Header";
@@ -30,9 +31,10 @@ export default function Breakdowns() {
     nonFunctionalTests,
     otherTests,
   } = useLoaderData<typeof loader>();
+  const params = useParams();
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">
         Test Type Breakdown
       </h1>
@@ -43,108 +45,103 @@ export default function Breakdowns() {
           chartName="Automated Tests"
           count={automatedTests.count}
           percentage={automatedTests.percentage}
-          page="/automatedtests"
+          page={`/automatedtests/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Manual Tests"
           count={manualTests.count}
           percentage={manualTests.percentage}
-          page="/manualtests"
+          page={`/manualtests/tr/${params.trId}/j/${params.jId}`}
         />
       </div>
-      <div className="grid grid-cols-4 py-10 border-2">
+      <div className="grid grid-cols-4 py-10 border-2 gap-12 border-b-8">
         <CountPercentageVisual
           chartName="Accessibility Tests"
           count={accessibilityTests.count}
           percentage={accessibilityTests.percentage}
-          page={`/tests/1`}
+          page={`/tests/1/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Data Validation Tests"
           count={dataValidationTests.count}
           percentage={dataValidationTests.percentage}
-          page={`/tests/2`}
+          page={`/tests/2/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="E2E Tests"
           count={e2eTests.count}
           percentage={e2eTests.percentage}
-          page={`/tests/3`}
+          page={`/tests/3/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Functional Tests"
           count={functionalTests.count}
           percentage={functionalTests.percentage}
-          page={`/tests/4`}
+          page={`/tests/4/tr/${params.trId}/j/${params.jId}`}
         />
-      </div>
-
-      <div className="grid grid-cols-4 py-10 border-2">
         <CountPercentageVisual
           chartName="Integration Tests"
           count={integrationTests.count}
           percentage={integrationTests.percentage}
-          page={`/tests/5`}
+          page={`/tests/5/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Performance Tests"
           count={performanceTests.count}
           percentage={performanceTests.percentage}
-          page={`/tests/6`}
+          page={`/tests/6/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Load Tests"
           count={loadTests.count}
           percentage={loadTests.percentage}
-          page={`/tests/7`}
+          page={`/tests/7/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Regression Tests"
           count={regressionTests.count}
           percentage={regressionTests.percentage}
-          page={`/tests/8`}
+          page={`/tests/8/tr/${params.trId}/j/${params.jId}`}
         />
-      </div>
-
-      <div className="grid grid-cols-5 py-10 border-2 border-b-8">
         <CountPercentageVisual
           chartName="Security Tests"
           count={securityTests.count}
           percentage={securityTests.percentage}
-          page={`/tests/9`}
+          page={`/tests/9/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Smoke Tests"
           count={smokeTests.count}
           percentage={smokeTests.percentage}
-          page={`/tests/10`}
+          page={`/tests/10/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Unit Tests"
           count={unitTests.count}
           percentage={unitTests.percentage}
-          page={`/tests/11`}
+          page={`/tests/11/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Non-Functional Tests"
           count={nonFunctionalTests.count}
           percentage={nonFunctionalTests.percentage}
-          page={`/tests/12`}
+          page={`/tests/12/tr/${params.trId}/j/${params.jId}`}
         />
         <CountPercentageVisual
           chartName="Other Tests"
           count={otherTests.count}
           percentage={otherTests.percentage}
-          page={`/tests/13`}
+          page={`/tests/13/tr/${params.trId}/j/${params.jId}`}
         />
       </div>
     </>
   );
 }
 
-export async function loader() {
+export async function loader({ params }: LoaderFunctionArgs) {
+  const testRailProjectId = params.trId;
   // const testCaseData = await getAllTestCases();
-  const testCaseData = await getTestCasesFromTestRail(0);
+  const testCaseData = await getTestCasesFromTestRail(testRailProjectId, 0);
 
   const totalTestCases = testCaseData.length;
 

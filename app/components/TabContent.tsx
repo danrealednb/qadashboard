@@ -10,12 +10,16 @@ function classNames(...classes: any) {
 
 export default function TabContent({
   data,
+  jiraProjectId,
+  testRailProjectId,
 }: {
   data: {
     "To Do": JIRA_ISSUE_FEATURE_DATA[];
     "In Progress": JIRA_ISSUE_FEATURE_DATA[];
     Done: JIRA_ISSUE_FEATURE_DATA[];
   };
+  jiraProjectId: string;
+  testRailProjectId: string;
 }) {
   let [categories] = useState(data);
 
@@ -70,7 +74,7 @@ export default function TabContent({
                       )}
                     </ul>
                     <Link
-                      to={`/featurecoverage/epic/${post.key}`}
+                      to={`/featurecoverage/epic/${post.key}/j/${jiraProjectId}/tr/${testRailProjectId}`}
                       className={classNames(
                         "absolute inset-0 rounded-md",
                         "ring-blue-400 focus:z-10 focus:outline-none focus:ring-2"

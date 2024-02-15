@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import TabContent from "~/components/TabContent";
 import TestList from "~/components/TestList";
@@ -23,9 +23,10 @@ import {
 
 export default function Stories() {
   const { testCoverage } = useLoaderData<typeof loader>();
+  const params = useParams();
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">
         Stories (Last 30 Days)
       </h1>
@@ -97,11 +98,13 @@ export default function Stories() {
 }
 
 export async function loader({ params }: LoaderFunctionArgs) {
-  const epic = params.id;
+  // const epic = params.id;
+  const jiraProject = params.jId;
+  const testRailProject = params.trId;
 
-  const jiraFeatureStoryData = await getJiraStories30Days();
+  const jiraFeatureStoryData = await getJiraStories30Days(jiraProject);
 
-  const testCases = await getTestCasesFromTestRailV2(0);
+  const testCases = await getTestCasesFromTestRailV2(testRailProject, 0);
 
   const testCoverage = getJiraRefTestsV3(
     jiraFeatureStoryData.jiraData,

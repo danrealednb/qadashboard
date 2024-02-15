@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import TestRunTestList from "~/components/TestRunTestList";
 import {
@@ -9,9 +9,10 @@ import {
 
 export default function TestRunResults() {
   const { testRunData } = useLoaderData<typeof loader>();
+  const params = useParams();
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">Test Run Results</h1>
       <h2 className="text-center text-2xl pb-5 text-blue-500">
         {testRunData.length}
@@ -23,9 +24,10 @@ export default function TestRunResults() {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const runId = params.runId;
+  const testRailProjectId = params.trId;
   //   const data = await getJiraBugs30Days();
 
-  const data = await getTestsInTestRun(0, runId!!);
+  const data = await getTestsInTestRun(testRailProjectId, 0, runId!!);
   //   console.log(data);
 
   const testRunData = strippedDownTestRunData(data);

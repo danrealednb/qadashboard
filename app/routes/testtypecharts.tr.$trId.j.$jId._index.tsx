@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useLoaderData, useParams } from "@remix-run/react";
 import { DateTime } from "luxon";
 import Header from "~/components/Header";
 import StarbaseLineChartTests from "~/components/LineChartTests";
@@ -10,12 +10,14 @@ export default function TestTypeCharts() {
   const { testTypes, chartData, years, testTypeTitle } =
     useLoaderData<typeof loader>();
 
+  const params = useParams();
+
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">Test Type Charts</h1>
       <div className="flex justify-center">
-        <Form className="grid justify-center space-y-5">
+        <Form className="grid justify-center space-y-5" method="GET">
           <label htmlFor="" className="font-bold text-center">
             Select Year
           </label>
@@ -76,16 +78,22 @@ export default function TestTypeCharts() {
   );
 }
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request, params }: LoaderFunctionArgs) {
+  const testRailProjectId = params.trId;
+  const jiraProjectId = params.jId;
   const url = new URL(request.url);
   const search = new URLSearchParams(url.search);
 
   const year = search.get("year") || DateTime.now().year.toString();
   const testType = search.get("testType") || "Total";
   const testTypeTitle = testType;
-  const dbTestTypeMetrics = await getTestTypeMetrics(year);
+  const dbTestTypeMetrics = await getTestTypeMetrics(
+    testRailProjectId,
+    jiraProjectId,
+    year
+  );
 
-  const dbTestType = testTypeMappingDB(testType);
+  const dbTestType = testTypeMappingDB(testRailProjectId, testType);
 
   const chartData = dbTestTypeMetrics.map((test: any) => {
     return {

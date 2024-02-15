@@ -1,7 +1,13 @@
 import { Link } from "@remix-run/react";
 import { FaUserAstronaut } from "react-icons/fa6";
 
-export default function Header() {
+export default function Header({
+  testRailProjectId,
+  jiraProjectId,
+}: {
+  testRailProjectId: string;
+  jiraProjectId: string;
+}) {
   return (
     <>
       <header>
@@ -15,39 +21,65 @@ export default function Header() {
           <ul className="flex justify-center items-center text-center space-x-5">
             <li key={1}>
               <Link to="/" className="underline" data-testid="homeLink">
-                Main
+                Projects
               </Link>
             </li>
             <li key={2}>
               <Link
-                to="/breakdown"
+                to={`/dashboard/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                className="underline"
+                data-testid="homeLink"
+              >
+                Dashboard
+              </Link>
+            </li>
+            <li key={3}>
+              <Link
+                to={`/breakdown/tr/${testRailProjectId}/j/${jiraProjectId}`}
                 className="underline"
                 data-testid="breakdownLink"
               >
                 Breakdowns
               </Link>
             </li>
-            <li key={3}>
+            <li key={4}>
               <Link
-                to="/bugcharts"
+                to={`/bugcharts/tr/${testRailProjectId}/j/${jiraProjectId}`}
                 className="underline"
                 data-testid="bugchartsLink"
               >
                 Bugs
               </Link>
             </li>
-            <li key={4}>
+            <li key={5}>
               <Link
-                to="/testtypecharts"
+                to={`/testtypecharts/tr/${testRailProjectId}/j/${jiraProjectId}`}
                 className="underline"
                 data-testid="testtypechartsLink"
               >
                 Test Charts
               </Link>
             </li>
+            <li key={6}>
+              <Link
+                to={`/drizzy/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                className="underline"
+                data-testid="drizzlyLink"
+              >
+                Save Monthly Data
+              </Link>
+            </li>
           </ul>
         </nav>
       </header>
+      <div className="grid justify-center text-center font-semibold">
+        <label htmlFor="" className="text-green-700">
+          Test Rail Project Id: {testRailProjectId}
+        </label>
+        <label htmlFor="" className="text-blue-700">
+          Jira Project Key: {jiraProjectId}
+        </label>
+      </div>
     </>
   );
 }

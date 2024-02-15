@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import TabContent from "~/components/TabContent";
 import TestList from "~/components/TestList";
@@ -22,9 +22,10 @@ import {
 export default function FeatureCoverageStories() {
   const { epic, testCoverage, tcp, featureData } =
     useLoaderData<typeof loader>();
+  const params = useParams();
   return (
     <>
-      <Header />
+      <Header testRailProjectId={params.trId} jiraProjectId={params.jpId} />
       <h1 className="text-center text-2xl py-5 underline">
         <a
           href={`https://eyeota.atlassian.net/browse/${epic}`}
@@ -111,10 +112,15 @@ export default function FeatureCoverageStories() {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const epic = params.id;
+  const testRailProjectId = params.trId;
+  const jiraProjectId = params.jpId;
 
-  const jiraFeatureStoryData = await getJiraFeatureStories(epic!!);
+  const jiraFeatureStoryData = await getJiraFeatureStories(
+    jiraProjectId,
+    epic!!
+  );
 
-  const testCases = await getTestCasesFromTestRailV2(0);
+  const testCases = await getTestCasesFromTestRailV2(testRailProjectId, 0);
 
   const testCoverage = getJiraRefTestsV2(
     jiraFeatureStoryData.jiraData,
@@ -132,7 +138,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
   };
   const tcp = testCoveragePercentage();
 
-  const featureData = await getJiraFeature(epic!!);
+  const featureData = await getJiraFeature(jiraProjectId, epic!!);
 
   return { epic, testCoverage, tcp, featureData };
 }
