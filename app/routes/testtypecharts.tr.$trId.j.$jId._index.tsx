@@ -86,14 +86,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const year = search.get("year") || DateTime.now().year.toString();
   const testType = search.get("testType") || "Total";
+
   const testTypeTitle = testType;
+
   const dbTestTypeMetrics = await getTestTypeMetrics(
     testRailProjectId,
     jiraProjectId,
     year
   );
 
-  const dbTestType = testTypeMappingDB(testRailProjectId, testType);
+  // console.log("Db Test Type Metrics", dbTestTypeMetrics);
+
+  const dbTestType = testTypeMappingDB(testType);
 
   const chartData = dbTestTypeMetrics.map((test: any) => {
     return {
