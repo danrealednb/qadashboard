@@ -9,7 +9,7 @@ export default function JiraList({
 }) {
   return (
     <>
-      <div className="grid justify-center">
+      <div className="grid justify-center px-4 pb-4">
         {jiraData.length === 0 && (
           <label htmlFor="" className="text-xl font-bold text-red-600">
             No Bugs Found!

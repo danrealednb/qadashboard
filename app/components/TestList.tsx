@@ -32,7 +32,7 @@ export default function TestList({
   return (
     <>
       {testCases.length > 0 && (
-        <div className="flex justify-center">
+        <div className="flex justify-center px-4 pb-4 text-pretty">
           <table className="">
             <thead>
               <tr className="text-center border-2 border-gray-900">

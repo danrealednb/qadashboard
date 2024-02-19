@@ -14,7 +14,7 @@ export default function Tests() {
       <div className="flex justify-center">
         <TabContent
           data={tabData}
-          jiraProjectId={params.id}
+          jiraProjectId={params.jId}
           testRailProjectId={params.trId}
         />
       </div>

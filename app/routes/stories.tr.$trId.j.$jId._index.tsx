@@ -30,7 +30,7 @@ export default function Stories() {
       <h1 className="text-center text-2xl py-5 underline">
         Stories (Last 30 Days)
       </h1>
-      <div className="flex justify-center py-5">
+      <div className="flex justify-center text-center py-5 px-5 text-pretty">
         <ul className="grid justify-center space-y-2">
           {testCoverage.length === 0 && (
             <h4 className="text-purple-600 font-semibold">No Stories</h4>
@@ -39,7 +39,7 @@ export default function Stories() {
             return (
               <>
                 <li key={story.key} className="space-x-2">
-                  <label htmlFor="">
+                  <label htmlFor="" className="font-semibold">
                     {story.key} {story.title}
                   </label>
                   {story.coverage && (

@@ -45,7 +45,7 @@ export default function FeatureCoverageStories() {
         {tcp}%
       </h3>
 
-      <ul className="grid justify-center space-y-2">
+      <ul className="grid justify-center space-y-2 px-4 pb-4 text-center text-pretty">
         {testCoverage.length === 0 && (
           <h4 className="text-purple-600 font-semibold">
             No Stories Linked to Feature
@@ -55,7 +55,7 @@ export default function FeatureCoverageStories() {
           return (
             <>
               <li key={story.key} className="space-x-2">
-                <label htmlFor="">
+                <label htmlFor="" className="font-semibold">
                   {story.key} {story.title}
                 </label>
                 {story.coverage && (
