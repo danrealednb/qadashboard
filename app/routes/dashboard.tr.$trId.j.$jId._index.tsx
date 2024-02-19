@@ -6,6 +6,7 @@ import {
   Form,
   useSearchParams,
   useParams,
+  useNavigation,
 } from "@remix-run/react";
 import CountVisualWithLink from "~/components/ChartVisualWithLink";
 import CountVisual from "~/components/CountVisual";
@@ -59,6 +60,8 @@ export default function Index() {
   } = useLoaderData<typeof loader>();
   // const [params] = useSearchParams();
   const params = useParams();
+  const transition = useNavigation();
+  const pageLoading = transition.state !== "idle";
 
   // const testRailProjectId = params.get("testRailProject") || "4";
   // const jiraProjectId = params.get("jiraProject") || "PLAT";
@@ -72,6 +75,11 @@ export default function Index() {
         jiraProjectId={jiraProjectId}
       />
 
+      {pageLoading && (
+        <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">
+          Data Loading.....
+        </div>
+      )}
       {/* <div className="flex justify-center items-center text-center pt-2">
         <Form className="grid space-y-2">
           <label htmlFor="" className="font-bold">

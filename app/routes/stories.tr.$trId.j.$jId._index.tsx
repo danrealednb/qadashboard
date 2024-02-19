@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useParams } from "@remix-run/react";
+import { useLoaderData, useNavigation, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import TabContent from "~/components/TabContent";
 import TestList from "~/components/TestList";
@@ -24,12 +24,19 @@ import {
 export default function Stories() {
   const { testCoverage } = useLoaderData<typeof loader>();
   const params = useParams();
+  const transition = useNavigation();
+  const pageLoading = transition.state !== "idle";
   return (
     <>
       <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">
         Stories (Last 30 Days)
       </h1>
+      {pageLoading && (
+        <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">
+          Test Data Loading.....
+        </div>
+      )}
       <div className="flex justify-center text-center py-5 px-5 text-pretty">
         <ul className="grid justify-center space-y-2">
           {testCoverage.length === 0 && (

@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useParams } from "@remix-run/react";
+import { useLoaderData, useNavigation, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import TestList from "~/components/TestList";
 import {
@@ -11,10 +11,17 @@ import {
 export default function ManualTests() {
   const { manualTests } = useLoaderData<typeof loader>();
   const params = useParams();
+  const transition = useNavigation();
+  const pageLoading = transition.state !== "idle";
   return (
     <>
       <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
       <h1 className="text-center text-2xl py-5 underline">Manual Tests</h1>
+      {pageLoading && (
+        <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">
+          Test Data Loading.....
+        </div>
+      )}
       {manualTests.length > 0 && (
         <h2 className="text-center text-2xl pb-5 text-blue-500">
           {manualTests.length}

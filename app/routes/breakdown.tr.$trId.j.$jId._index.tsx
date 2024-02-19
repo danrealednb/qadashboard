@@ -1,5 +1,5 @@
 import { LoaderFunctionArgs } from "@remix-run/node";
-import { useLoaderData, useParams } from "@remix-run/react";
+import { useLoaderData, useNavigation, useParams } from "@remix-run/react";
 import CountPercentageVisual from "~/components/CountPercentageVisual";
 import CountVisual from "~/components/CountVisual";
 import Header from "~/components/Header";
@@ -32,6 +32,8 @@ export default function Breakdowns() {
     otherTests,
   } = useLoaderData<typeof loader>();
   const params = useParams();
+  const transition = useNavigation();
+  const pageLoading = transition.state !== "idle";
   return (
     <>
       <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
@@ -39,6 +41,11 @@ export default function Breakdowns() {
         Test Type Breakdown
       </h1>
 
+      {pageLoading && (
+        <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">
+          Test Data Loading.....
+        </div>
+      )}
       <div className="grid grid-cols-3 py-10 border-2 border-t-8">
         <CountVisual chartName="Total Tests" count={totalTestCases} />
         <CountPercentageVisual
