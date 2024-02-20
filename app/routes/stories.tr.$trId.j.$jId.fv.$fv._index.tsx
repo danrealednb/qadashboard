@@ -25,12 +25,18 @@ export default function Stories() {
   const params = useParams();
   const transition = useNavigation();
   const pageLoading = transition.state !== "idle";
+  const pageHeadingText =
+    params.fv === "NA"
+      ? "Stories And Bugs Resolved Last 30 Days"
+      : `Stories And Bugs Resolved Release ${params.fv}`;
   return (
     <>
-      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
-      <h1 className="text-center text-2xl py-5 underline">
-        Stories (Last 30 Days)
-      </h1>
+      <Header
+        testRailProjectId={params.trId}
+        jiraProjectId={params.jId}
+        fixVersionId={params.fv}
+      />
+      <h1 className="text-center text-2xl py-5 underline">{pageHeadingText}</h1>
       {pageLoading && (
         <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">
           Test Data Loading.....
@@ -41,6 +47,24 @@ export default function Stories() {
           {testCoverage.length === 0 && (
             <h4 className="text-purple-600 font-semibold">No Stories</h4>
           )}
+
+          {testCoverage.length > 0 && (
+            <>
+              <div className="pb-5">
+                <h4 className="text-blue-600 font-semibold py-1">
+                  {" "}
+                  Total Stories:
+                  {testCoverage.filter((s) => s.issueType === "Story").length}
+                </h4>
+                <h4 className="text-purple-600 font-semibold py-1">
+                  {" "}
+                  Total Bugs:
+                  {testCoverage.filter((s) => s.issueType === "Bug").length}
+                </h4>
+              </div>
+            </>
+          )}
+
           {testCoverage.map((story: TEST_COVERAGE) => {
             return (
               <>
@@ -121,8 +145,12 @@ export async function loader({ params }: LoaderFunctionArgs) {
   // const epic = params.id;
   const jiraProject = params.jId;
   const testRailProject = params.trId;
+  const fixVersion = params.fv;
 
-  const jiraFeatureStoryData = await getJiraStories30Days(jiraProject);
+  const jiraFeatureStoryData = await getJiraStories30Days(
+    jiraProject,
+    fixVersion
+  );
 
   const testCases = await getTestCasesFromTestRailV2(testRailProject, 0);
 

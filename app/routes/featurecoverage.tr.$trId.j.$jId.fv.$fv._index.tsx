@@ -11,7 +11,11 @@ export default function Tests() {
   const pageLoading = transition.state !== "idle";
   return (
     <>
-      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
+      <Header
+        testRailProjectId={params.trId}
+        jiraProjectId={params.jId}
+        fixVersionId={params.fv}
+      />
       <h1 className="text-center text-2xl py-5 underline">Feature Coverage</h1>
       {pageLoading && (
         <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">

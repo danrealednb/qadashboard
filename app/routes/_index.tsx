@@ -30,6 +30,7 @@ export default function Index() {
 
   const testRailProjectId = params.get("testRailProject") || "4";
   const jiraProjectId = params.get("jiraProject") || "PLAT";
+  const fixVersion = params.get("fixVersion") || "NA";
 
   return (
     <>
@@ -94,6 +95,17 @@ export default function Index() {
             </Await>
           </Suspense>
 
+          <label htmlFor="" className="font-bold">
+            Release Version
+          </label>
+
+          <input
+            type="text"
+            name="fixVersion"
+            className="border-green-700 border-2 rounded-full px-2 py-1"
+            defaultValue={fixVersion}
+          />
+
           <div className="py-5">
             <button className="border-4 border-red-600 rounded-full px-2 py-1">
               View Dashboard
@@ -124,6 +136,6 @@ export async function action({ request }: ActionFunctionArgs) {
   //   console.log(vals);
 
   return redirect(
-    `/dashboard/tr/${vals.testRailProject.toString()}/j/${vals.jiraProject.toString()}`
+    `/dashboard/tr/${vals.testRailProject.toString()}/j/${vals.jiraProject.toString()}/fv/${vals.fixVersion.toString()}`
   );
 }

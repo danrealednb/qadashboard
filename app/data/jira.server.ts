@@ -37,8 +37,13 @@ export interface JIRA_ISSUE_FEATURE_DATA {
   resolutionDate: string;
 }
 
-export async function getJiraBugs30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getJiraBugs30Days(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26created>=-30d" : `%26fixVersion=${fixVersion}`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -90,8 +95,13 @@ export async function getJiraBugs30Days(jiraProject: string) {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraBugs30DaysProd(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getJiraBugs30DaysProd(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26created>=-30d" : `%26fixVersion=${fixVersion}`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -141,8 +151,13 @@ export async function getJiraBugs30DaysProd(jiraProject: string) {
 
   return { totalJiraIssues, jiraData };
 }
-export async function getJiraBugs30DaysDev(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getJiraBugs30DaysDev(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26created>=-30d" : `%26fixVersion=${fixVersion}`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -193,8 +208,13 @@ export async function getJiraBugs30DaysDev(jiraProject: string) {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraStories30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype%20in(Story,Bug)%26resolved>=-30d&fields=id.key,summary,issuelinks,issuetype&maxResults=100`;
+export async function getJiraStories30Days(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26resolved>=-30d" : `%26fixVersion=${fixVersion}`;
+  const query = `project=${jiraProject}%26issuetype%20in(Story,Bug)${fixVersionIncluded}&fields=id.key,summary,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -234,8 +254,13 @@ export async function getJiraStories30Days(jiraProject: string) {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getResolvedJiraBugs30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26resolved>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getResolvedJiraBugs30Days(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26resolved>=-30d" : `%26fixVersion=${fixVersion}`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,

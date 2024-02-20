@@ -37,6 +37,7 @@ import {
 export async function action({ request, params }: ActionFunctionArgs) {
   const testRailProjectId = params.trId;
   const jiraProjectId = params.jId;
+  const fixVersion = params.fv;
   const formData = await request.formData();
   const vals = Object.fromEntries(formData);
   console.log(vals);
@@ -53,7 +54,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
     vals.month.toString(),
     vals.year.toString()
   );
-  return redirect(`/dashboard/tr/${testRailProjectId}/j/${jiraProjectId}`);
+  return redirect(
+    `/dashboard/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`
+  );
 }
 export async function loader({ request, params }: LoaderFunctionArgs) {
   const testRailProjectId = params.trId;
@@ -97,13 +100,17 @@ async function addBugData(
   month: string,
   year: string
 ) {
-  const jiraDefects30Days = await getJiraBugs30Days(jiraProjectId);
-  const jiraDefects30DaysProd = await getJiraBugs30DaysProd(jiraProjectId);
-  const jiraDefects30DaysDev = await getJiraBugs30DaysDev(jiraProjectId);
-  const jiraStories30Days = await getJiraStories30Days(jiraProjectId);
+  const jiraDefects30Days = await getJiraBugs30Days(jiraProjectId, "NA");
+  const jiraDefects30DaysProd = await getJiraBugs30DaysProd(
+    jiraProjectId,
+    "NA"
+  );
+  const jiraDefects30DaysDev = await getJiraBugs30DaysDev(jiraProjectId, "NA");
+  const jiraStories30Days = await getJiraStories30Days(jiraProjectId, "NA");
 
   const jiraDefectsResolved30Days = await getResolvedJiraBugs30Days(
-    jiraProjectId
+    jiraProjectId,
+    "NA"
   );
   const defectResolutionTime = await getDefectResolutionTime(
     jiraDefectsResolved30Days.jiraData
@@ -208,7 +215,11 @@ export default function Index() {
   const params = useParams();
   return (
     <>
-      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
+      <Header
+        testRailProjectId={params.trId}
+        jiraProjectId={params.jId}
+        fixVersionId={params.fv}
+      />
       <Form method="POST" className="pt-10">
         <div className="grid justify-center space-y-5">
           {/* <div className="grid">

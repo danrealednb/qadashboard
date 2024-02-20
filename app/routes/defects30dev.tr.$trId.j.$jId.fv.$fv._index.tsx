@@ -2,20 +2,25 @@ import { LoaderFunctionArgs } from "@remix-run/node";
 import { useLoaderData, useNavigation, useParams } from "@remix-run/react";
 import Header from "~/components/Header";
 import JiraList from "~/components/JiraList";
-import { getJiraBugs30Days } from "~/data/jira.server";
+import { getJiraBugs30DaysDev } from "~/data/jira.server";
 
-export default function Bugs() {
+export default function BugsDev() {
   const { data } = useLoaderData<typeof loader>();
   const params = useParams();
   const transition = useNavigation();
   const pageLoading = transition.state !== "idle";
-
+  const pageHeadingText =
+    params.fv === "NA"
+      ? "Defects Found In Last 30 Days in Dev/QA"
+      : `Defects Found In Dev/QA Release ${params.fv}`;
   return (
     <>
-      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
-      <h1 className="text-center text-2xl py-5 underline">
-        Defects Found In Last 30 Days
-      </h1>
+      <Header
+        testRailProjectId={params.trId}
+        jiraProjectId={params.jId}
+        fixVersionId={params.fv}
+      />
+      <h1 className="text-center text-2xl py-5 underline">{pageHeadingText}</h1>
       {pageLoading && (
         <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">
           Data Loading.....
@@ -28,7 +33,8 @@ export default function Bugs() {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const jiraProjectId = params.jId;
-  const data = await getJiraBugs30Days(jiraProjectId);
+  const fixVersion = params.fv;
+  const data = await getJiraBugs30DaysDev(jiraProjectId, fixVersion);
 
   return { data };
 }
