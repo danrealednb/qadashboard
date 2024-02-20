@@ -93,7 +93,9 @@ export default function OpenBugList({
                     {issue.issueLinks && (
                       <td className="grid border-r-2 px-2 py-1 text-blue-600">
                         {issue.issueLinks.map((il) => (
-                          <a href={`https://eyeota.atlassian.net/browse/${il}`}>
+                          <a
+                            href={`https://eyeota.atlassian.net/browse/${il.key}`}
+                          >
                             {il.reason} {il.key}
                           </a>
                         ))}
