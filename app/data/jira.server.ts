@@ -10,11 +10,24 @@ export interface JIRA_ISSUE_DATA {
   completeDate: string;
   severity: string;
   issueLinks: Array<{ key: string; reason: string }> | null;
+  issueType: string;
+}
+
+export interface JIRA_ISSUE_BUGS_OPEN {
+  key: string;
+  title: string;
+  startDate: string;
+  completeDate: string;
+  severity: string;
+  issueLinks: Array<{ key: string; reason: string }> | null;
+  issueType: string;
+  daysOpened: number;
 }
 
 export interface JIRA_ISSUE_STORY_DATA {
   key: string;
   title: string;
+  issueType: string;
 }
 
 export interface JIRA_ISSUE_FEATURE_DATA {
@@ -25,7 +38,7 @@ export interface JIRA_ISSUE_FEATURE_DATA {
 }
 
 export async function getJiraBugs30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks&maxResults=100`;
+  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -68,7 +81,9 @@ export async function getJiraBugs30Days(jiraProject: string) {
             };
           })
         : null,
+      issueType: element.fields.issuetype.name,
     };
+
     jiraData.push(obj);
   }
 
@@ -76,7 +91,7 @@ export async function getJiraBugs30Days(jiraProject: string) {
 }
 
 export async function getJiraBugs30DaysProd(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority,issuelinks&maxResults=100`;
+  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -119,6 +134,7 @@ export async function getJiraBugs30DaysProd(jiraProject: string) {
             };
           })
         : null,
+      issueType: element.fields.issuetype.name,
     };
     jiraData.push(obj);
   }
@@ -126,7 +142,7 @@ export async function getJiraBugs30DaysProd(jiraProject: string) {
   return { totalJiraIssues, jiraData };
 }
 export async function getJiraBugs30DaysDev(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority,issuelinks&maxResults=100`;
+  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -169,6 +185,7 @@ export async function getJiraBugs30DaysDev(jiraProject: string) {
             };
           })
         : null,
+      issueType: element.fields.issuetype.name,
     };
     jiraData.push(obj);
   }
@@ -177,7 +194,7 @@ export async function getJiraBugs30DaysDev(jiraProject: string) {
 }
 
 export async function getJiraStories30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Story%26resolved>=-30d&fields=id.key,summary,issuelinks&maxResults=100`;
+  const query = `project=${jiraProject}%26issuetype%20in(Story,Bug)%26resolved>=-30d&fields=id.key,summary,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -209,6 +226,7 @@ export async function getJiraStories30Days(jiraProject: string) {
     const obj: JIRA_ISSUE_STORY_DATA = {
       key: element.key,
       title: element.fields.summary,
+      issueType: element.fields.issuetype.name,
     };
     jiraData.push(obj);
   }
@@ -217,7 +235,7 @@ export async function getJiraStories30Days(jiraProject: string) {
 }
 
 export async function getResolvedJiraBugs30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26resolved>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks&maxResults=100`;
+  const query = `project=${jiraProject}%26issuetype=Bug%26resolved>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -260,6 +278,7 @@ export async function getResolvedJiraBugs30Days(jiraProject: string) {
             };
           })
         : null,
+      issueType: element.fields.issuetype.name,
     };
     jiraData.push(obj);
   }
@@ -437,7 +456,7 @@ export async function getJiraFeatures(
 }
 
 export async function getJiraFeatureStories(jiraProject: string, epic: string) {
-  const query = `project=${jiraProject}%26"Epic Link"=${epic}&fields=id.key,summary,issuetype,customfield_10010,priority,issuelinks&maxResults=100`;
+  const query = `project=${jiraProject}%26"Epic Link"=${epic}&fields=id.key,summary,issuetype,customfield_10010,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -480,6 +499,7 @@ export async function getJiraFeatureStories(jiraProject: string, epic: string) {
             };
           })
         : null,
+      issueType: element.fields.issuetype.name,
     };
     jiraData.push(obj);
   }
@@ -534,4 +554,66 @@ export async function getJiraProjects() {
     method: "GET",
   });
   return response.data;
+}
+
+export async function getJiraBugsOpened(jiraProject: string) {
+  const query = `project=${jiraProject}%26issuetype=Bug%26status%20not%20in%20(Done)&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  const totalJiraIssues: number = response.data.total;
+
+  let jiraData = [];
+
+  for (let index = 0; index < response.data.issues.length; index++) {
+    const element = response.data.issues[index];
+
+    const startDate = element.fields.created;
+
+    const date1 = DateTime.now();
+    const date2 = DateTime.fromISO(startDate);
+
+    const diff = date1.diff(date2, "days");
+
+    const diffObj = diff.toObject();
+
+    const obj: JIRA_ISSUE_BUGS_OPEN = {
+      key: element.key,
+      title: element.fields.summary,
+      startDate: element.fields.created,
+      completeDate: element.fields.resolutiondate,
+      severity: element.fields.priority.name,
+      issueLinks: element.fields.issuelinks
+        ? element.fields.issuelinks.map((il: any) => {
+            return {
+              key: il.inwardIssue ? il.inwardIssue.key : il.outwardIssue.key,
+              reason: il.outwardIssue ? il.type.outward : il.type.inward,
+            };
+          })
+        : null,
+      issueType: element.fields.issuetype.name,
+      daysOpened: diffObj.days as number,
+    };
+    jiraData.push(obj);
+  }
+
+  return { totalJiraIssues, jiraData };
 }

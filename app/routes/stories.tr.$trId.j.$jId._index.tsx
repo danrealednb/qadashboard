@@ -14,7 +14,6 @@ import {
   TEST_CASE_STR,
   TEST_COVERAGE,
   getAllTestCases,
-  getJiraRefTestsV2,
   getJiraRefTestsV3,
   getTestCasesFromTestRail,
   getTestCasesFromTestRailV2,
@@ -46,9 +45,25 @@ export default function Stories() {
             return (
               <>
                 <li key={story.key} className="space-x-2">
-                  <label htmlFor="" className="font-semibold">
-                    {story.key} {story.title}
-                  </label>
+                  {story.issueType === "Story" && (
+                    <>
+                      <label htmlFor="" className="font-semibold">
+                        {story.key} {story.title}
+                      </label>
+                    </>
+                  )}
+
+                  {story.issueType === "Bug" && (
+                    <>
+                      <label htmlFor="" className="font-semibold">
+                        {story.key} {story.title}
+                      </label>
+                      <label htmlFor="" className="text-red-600 font-extrabold">
+                        ({story.issueType})
+                      </label>
+                    </>
+                  )}
+
                   {story.coverage && (
                     <label htmlFor="" className="text-green-600 font-semibold">
                       Covered

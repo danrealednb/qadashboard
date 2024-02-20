@@ -366,6 +366,7 @@ export interface TEST_COVERAGE {
   completeDate: string;
   coverage: boolean;
   tests: Array<TEST_CASE_STR> | null | undefined;
+  issueType: string;
 }
 export const getJiraRefTestsV2 = (
   jiraStories: Array<JIRA_ISSUE_DATA>,
@@ -397,6 +398,7 @@ export const getJiraRefTestsV2 = (
       completeDate: element.completeDate,
       coverage: tests.length > 0 ? true : false,
       tests: newTest,
+      issueType: element.issueType,
     };
     testCoverage.push(obj);
   }
@@ -433,6 +435,7 @@ export const getJiraRefTestsV3 = (
       completeDate: element.completeDate,
       coverage: tests.length > 0 ? true : false,
       tests: newTest,
+      issueType: element.issueType,
     };
     testCoverage.push(obj);
   }

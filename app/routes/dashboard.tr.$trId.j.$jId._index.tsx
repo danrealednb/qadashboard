@@ -23,6 +23,7 @@ import {
   getJiraBugs30Days,
   getJiraBugs30DaysDev,
   getJiraBugs30DaysProd,
+  getJiraBugsOpened,
   getJiraDefectResolutionTime,
   getJiraProjects,
   getJiraStories30Days,
@@ -57,6 +58,7 @@ export default function Index() {
     defectDensity,
     defectResolutionTime,
     defectseverityindex,
+    jiraDefectsOpen,
   } = useLoaderData<typeof loader>();
   // const [params] = useSearchParams();
   const params = useParams();
@@ -226,7 +228,7 @@ export default function Index() {
         </Suspense>
       </div>
 
-      <div className="grid grid-cols-4 py-20">
+      <div className="grid grid-cols-5 py-20">
         <Suspense fallback={<p>Loading Data.......</p>}>
           <Await resolve={jiraDefects30Days}>
             {(jiraDefects30Days) => (
@@ -270,6 +272,18 @@ export default function Index() {
                 chartName="Defect Severity Index"
                 count={parseFloat(defectseverityindex)}
                 page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}`}
+              />
+            )}
+          </Await>
+        </Suspense>
+
+        <Suspense fallback={<p>Loading Data.......</p>}>
+          <Await resolve={jiraDefectsOpen}>
+            {(jiraDefectsOpen) => (
+              <CountVisualWithLink
+                chartName="Open Bugs"
+                count={parseFloat(jiraDefectsOpen.totalJiraIssues)}
+                page={`/defects/open/tr/${testRailProjectId}/j/${jiraProjectId}`}
               />
             )}
           </Await>
@@ -319,6 +333,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const defectseverityindex = getDefectSeverityIndex(jiraDefects30Days);
 
+  const jiraDefectsOpen = getJiraBugsOpened(selectedJiraProject);
+
   return defer({
     testRuns,
     jiraDefects30Days,
@@ -329,5 +345,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     defectDensity,
     defectResolutionTime,
     defectseverityindex,
+    jiraDefectsOpen,
   });
 }
