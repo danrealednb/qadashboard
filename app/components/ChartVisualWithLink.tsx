@@ -11,7 +11,7 @@ export default function CountVisualWithLink({
 }) {
   return (
     <>
-      <div className="grid justify-center text-center space-y-2">
+      <div className="grid justify-center text-center space-y-2 text-pretty">
         <label htmlFor="" className="text-xl font-bold">
           <Link to={page}>{chartName}</Link>
         </label>

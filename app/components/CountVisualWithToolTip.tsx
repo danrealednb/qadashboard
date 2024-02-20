@@ -11,7 +11,7 @@ export default function CountVisualWithTooltip({
 }) {
   return (
     <>
-      <div className="grid justify-center text-center space-y-2">
+      <div className="grid justify-center text-center space-y-2 text-pretty">
         <BasicTooltip chartName={chartName} tooltip={tooltip} />
         <label htmlFor="" className="text-blue-700 font-bold">
           {count}

@@ -47,6 +47,9 @@ export default function JiraList({
                   <th className="border-r-2 border-gray-900 px-2 py-1">
                     Severity
                   </th>
+                  <th className="border-r-2 border-gray-900 px-2 py-1">
+                    Linked Issues
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -78,6 +81,17 @@ export default function JiraList({
                     {issue.severity === "Critical" && (
                       <td className="border-r-2 px-2 py-1 text-orange-500 font-semibold">
                         {issue.severity}
+                      </td>
+                    )}
+                    {/* <label htmlFor="">IL {issue.issueLinks}</label> */}
+
+                    {issue.issueLinks && (
+                      <td className="grid border-r-2 px-2 py-1 text-blue-600">
+                        {issue.issueLinks.map((il) => (
+                          <a href={`https://eyeota.atlassian.net/browse/${il}`}>
+                            {il.reason} {il.key}
+                          </a>
+                        ))}
                       </td>
                     )}
                   </tr>
