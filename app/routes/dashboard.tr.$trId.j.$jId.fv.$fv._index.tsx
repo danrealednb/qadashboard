@@ -175,14 +175,14 @@ export default function Index() {
         <div className="grid justify-center text-center space-y-2">
           <label htmlFor="" className="text-xl font-bold">
             <Link
-              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}`}
+              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
             >
               Feature Test Coverage
             </Link>
           </label>
           <label htmlFor="" className="text-blue-700 font-bold">
             <Link
-              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}`}
+              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
             >
               Click to learn more
             </Link>
@@ -231,7 +231,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Resolved Stories + Bugs (30 Days)"
                 count={jiraStories30Days.totalJiraIssues}
-                page={`/stories/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                page={`/stories/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -245,7 +245,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defects (30 Days)"
                 count={jiraDefects30Days.totalJiraIssues}
-                page={`/defects30all/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                page={`/defects30all/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -257,7 +257,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defects Prod (30 Days) (Defect Leakage)"
                 count={jiraDefects30DaysProd.totalJiraIssues}
-                page={`/defects30prod/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                page={`/defects30prod/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -269,7 +269,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defects Dev (30 Days)"
                 count={jiraDefects30DaysDev.totalJiraIssues}
-                page={`/defects30dev/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                page={`/defects30dev/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -281,7 +281,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defect Severity Index"
                 count={parseFloat(defectseverityindex)}
-                page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -349,7 +349,7 @@ export default function Index() {
                   <CountVisualWithLink
                     chartName="Resolved Stories + Bugs"
                     count={jiraStories30DaysFV.totalJiraIssues}
-                    page={`/stories/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                    page={`/stories/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
                   />
                 )}
               </Await>
@@ -363,7 +363,7 @@ export default function Index() {
                   <CountVisualWithLink
                     chartName="Defects"
                     count={jiraDefects30DaysFV.totalJiraIssues}
-                    page={`/defects30all/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                    page={`/defects30all/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
                   />
                 )}
               </Await>
@@ -375,7 +375,7 @@ export default function Index() {
                   <CountVisualWithLink
                     chartName="Defects Prod (Defect Leakage)"
                     count={jiraDefects30DaysProdFV.totalJiraIssues}
-                    page={`/defects30prod/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                    page={`/defects30prod/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
                   />
                 )}
               </Await>
@@ -387,7 +387,7 @@ export default function Index() {
                   <CountVisualWithLink
                     chartName="Defects QA"
                     count={jiraDefects30DaysDevFV.totalJiraIssues}
-                    page={`/defects30dev/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                    page={`/defects30dev/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
                   />
                 )}
               </Await>
@@ -399,7 +399,7 @@ export default function Index() {
                   <CountVisualWithLink
                     chartName="Defect Severity Index"
                     count={parseFloat(defectseverityindexFV)}
-                    page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
+                    page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
                   />
                 )}
               </Await>

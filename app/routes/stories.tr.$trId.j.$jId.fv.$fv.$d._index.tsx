@@ -26,7 +26,7 @@ export default function Stories() {
   const transition = useNavigation();
   const pageLoading = transition.state !== "idle";
   const pageHeadingText =
-    params.fv === "NA"
+    params.fv === "NA" || params.d === "t"
       ? "Stories And Bugs Resolved Last 30 Days"
       : `Stories And Bugs Resolved Release ${params.fv}`;
   return (
@@ -146,10 +146,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
   const jiraProject = params.jId;
   const testRailProject = params.trId;
   const fixVersion = params.fv;
+  const show30Days = params.d === "t" ? "NA" : fixVersion;
 
   const jiraFeatureStoryData = await getJiraStories30Days(
     jiraProject,
-    fixVersion
+    show30Days
   );
 
   const testCases = await getTestCasesFromTestRailV2(testRailProject, 0);

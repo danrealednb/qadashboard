@@ -10,7 +10,7 @@ export default function DefectSeverityIndex() {
   const transition = useNavigation();
   const pageLoading = transition.state !== "idle";
   const pageHeadingText =
-    params.fv === "NA"
+    params.fv === "NA" || params.d === "t"
       ? "Defect Severity Index Last 30 Days"
       : `Defect Severity Index Release ${params.fv}`;
   return (
@@ -34,7 +34,8 @@ export default function DefectSeverityIndex() {
 export async function loader({ params }: LoaderFunctionArgs) {
   const jiraProjectId = params.jId;
   const fixVersion = params.fv;
-  const data = await getJiraBugs30Days(jiraProjectId, fixVersion);
+  const show30Days = params.d === "t" ? "NA" : fixVersion;
+  const data = await getJiraBugs30Days(jiraProjectId, show30Days);
 
   return { data };
 }

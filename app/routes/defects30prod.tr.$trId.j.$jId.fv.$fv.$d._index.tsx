@@ -10,7 +10,7 @@ export default function BugsProd() {
   const transition = useNavigation();
   const pageLoading = transition.state !== "idle";
   const pageHeadingText =
-    params.fv === "NA"
+    params.fv === "NA" || params.d === "t"
       ? "Defects Found In Last 30 Days in Production (Defect Leakage)"
       : `Defects Found In Production (Defect Leakage) Release ${params.fv}`;
   return (
@@ -34,7 +34,8 @@ export default function BugsProd() {
 export async function loader({ params }: LoaderFunctionArgs) {
   const jiraProjectId = params.jId;
   const fixVersion = params.fv;
-  const data = await getJiraBugs30DaysProd(jiraProjectId, fixVersion);
+  const show30Days = params.d === "t" ? "NA" : fixVersion;
+  const data = await getJiraBugs30DaysProd(jiraProjectId, show30Days);
 
   return { data };
 }

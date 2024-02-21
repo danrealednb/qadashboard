@@ -12,6 +12,7 @@ export default function TabContent({
   data,
   jiraProjectId,
   testRailProjectId,
+  fixVersion,
 }: {
   data: {
     "To Do": JIRA_ISSUE_FEATURE_DATA[];
@@ -20,6 +21,7 @@ export default function TabContent({
   };
   jiraProjectId: string;
   testRailProjectId: string;
+  fixVersion: string;
 }) {
   let [categories] = useState(data);
 
@@ -74,7 +76,7 @@ export default function TabContent({
                       )}
                     </ul>
                     <Link
-                      to={`/featurecoverage/epic/${post.key}/j/${jiraProjectId}/tr/${testRailProjectId}`}
+                      to={`/featurecoverage/epic/${post.key}/j/${jiraProjectId}/tr/${testRailProjectId}/fv/${fixVersion}`}
                       className={classNames(
                         "absolute inset-0 rounded-md",
                         "ring-blue-400 focus:z-10 focus:outline-none focus:ring-2"

@@ -27,6 +27,7 @@ export default function Tests() {
           data={tabData}
           jiraProjectId={params.jId}
           testRailProjectId={params.trId}
+          fixVersion={params.fv}
         />
       </div>
     </>
