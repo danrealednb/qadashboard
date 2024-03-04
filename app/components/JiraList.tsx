@@ -21,7 +21,7 @@ export default function JiraList({
             <h2 className="text-center text-2xl pb-5 text-blue-500">
               Total Bugs: {totalIssues}
             </h2>
-            <div className="grid justify-center py-2">
+            <div className="grid justify-center py-2 pb-5">
               <label htmlFor="" className="font-semibold text-blue-600">
                 Low: {jiraData.filter((d) => d.severity === "Low").length}
               </label>

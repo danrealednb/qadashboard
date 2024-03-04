@@ -9,13 +9,19 @@ export default function Bugs() {
   const params = useParams();
   const transition = useNavigation();
   const pageLoading = transition.state !== "idle";
+  const pageHeadingText =
+    params.fv === "NA" || params.d === "t"
+      ? "Defects Found In Last 30 Days"
+      : `Defects Found In Release ${params.fv}`;
 
   return (
     <>
-      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
-      <h1 className="text-center text-2xl py-5 underline">
-        Defects Found In Last 30 Days
-      </h1>
+      <Header
+        testRailProjectId={params.trId}
+        jiraProjectId={params.jId}
+        fixVersionId={params.fv}
+      />
+      <h1 className="text-center text-2xl py-5 underline">{pageHeadingText}</h1>
       {pageLoading && (
         <div className="flex justify-center items-center text-center text-yellow-500 text-3xl py-5">
           Data Loading.....
@@ -28,7 +34,9 @@ export default function Bugs() {
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const jiraProjectId = params.jId;
-  const data = await getJiraBugs30Days(jiraProjectId);
+  const fixVersion = params.fv;
+  const show30Days = params.d === "t" ? "NA" : fixVersion;
+  const data = await getJiraBugs30Days(jiraProjectId, show30Days);
 
   return { data };
 }

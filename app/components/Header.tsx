@@ -4,9 +4,11 @@ import { FaUserAstronaut } from "react-icons/fa6";
 export default function Header({
   testRailProjectId,
   jiraProjectId,
+  fixVersionId,
 }: {
   testRailProjectId: string;
   jiraProjectId: string;
+  fixVersionId: string;
 }) {
   return (
     <>
@@ -26,7 +28,7 @@ export default function Header({
             </li>
             <li key={2}>
               <Link
-                to={`/dashboard/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                to={`/dashboard/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
                 className="underline"
                 data-testid="homeLink"
               >
@@ -35,25 +37,38 @@ export default function Header({
             </li>
             <li key={3}>
               <Link
-                to={`/breakdown/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                to={`/breakdown/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
                 className="underline"
                 data-testid="breakdownLink"
               >
                 Breakdowns
               </Link>
             </li>
+            <li key={3}>
+              <Link
+                to={`/sprint/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
+                className="underline"
+                data-testid="sprintLink"
+              >
+                Sprint
+              </Link>
+            </li>
+          </ul>
+        </nav>
+        <nav className="flex justify-center items-center text-center  pb-2 pt-2">
+          <ul className="flex justify-center items-center text-center space-x-5">
             <li key={4}>
               <Link
-                to={`/bugcharts/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                to={`/bugcharts/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
                 className="underline"
                 data-testid="bugchartsLink"
               >
-                Bugs
+                Bug Charts
               </Link>
             </li>
             <li key={5}>
               <Link
-                to={`/testtypecharts/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                to={`/testtypecharts/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
                 className="underline"
                 data-testid="testtypechartsLink"
               >
@@ -62,11 +77,33 @@ export default function Header({
             </li>
             <li key={6}>
               <Link
-                to={`/drizzy/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                to={`/add/monthly/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
                 className="underline"
-                data-testid="drizzlyLink"
+                data-testid="monthlyLink"
               >
                 Save Monthly Data
+              </Link>
+            </li>
+          </ul>
+        </nav>
+        <nav className="flex justify-center items-center text-center  pb-2 pt-2">
+          <ul className="flex justify-center items-center text-center space-x-5">
+            <li key={7}>
+              <Link
+                to={`/bugcharts/release/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
+                className="underline"
+                data-testid="bugreleasechartsLink"
+              >
+                Release Bugs Charts
+              </Link>
+            </li>
+            <li key={8}>
+              <Link
+                to={`/add/release/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
+                className="underline"
+                data-testid="releaseLink"
+              >
+                Save Release Data
               </Link>
             </li>
           </ul>
@@ -78,6 +115,9 @@ export default function Header({
         </label>
         <label htmlFor="" className="text-blue-700">
           Jira Project Key: {jiraProjectId}
+        </label>
+        <label htmlFor="" className="text-blue-700">
+          Release Version: {fixVersionId}
         </label>
       </div>
     </>

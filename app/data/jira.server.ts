@@ -37,8 +37,14 @@ export interface JIRA_ISSUE_FEATURE_DATA {
   resolutionDate: string;
 }
 
-export async function getJiraBugs30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getJiraBugs30Days(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26created>=-30d" : `%26fixVersion="${fixVersion}"`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+  // console.log(query);
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -90,8 +96,13 @@ export async function getJiraBugs30Days(jiraProject: string) {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraBugs30DaysProd(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getJiraBugs30DaysProd(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26created>=-30d" : `%26fixVersion="${fixVersion}"`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}%26"Environment[Dropdown]"=Prod&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -141,8 +152,13 @@ export async function getJiraBugs30DaysProd(jiraProject: string) {
 
   return { totalJiraIssues, jiraData };
 }
-export async function getJiraBugs30DaysDev(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26created>=-30d%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getJiraBugs30DaysDev(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26created>=-30d" : `%26fixVersion="${fixVersion}"`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}%26"Environment[Dropdown]"=Dev&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -193,8 +209,13 @@ export async function getJiraBugs30DaysDev(jiraProject: string) {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getJiraStories30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype%20in(Story,Bug)%26resolved>=-30d&fields=id.key,summary,issuelinks,issuetype&maxResults=100`;
+export async function getJiraStories30Days(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26resolved>=-30d" : `%26fixVersion="${fixVersion}"`;
+  const query = `project=${jiraProject}%26issuetype%20in(Story,Bug)${fixVersionIncluded}&fields=id.key,summary,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -234,8 +255,13 @@ export async function getJiraStories30Days(jiraProject: string) {
   return { totalJiraIssues, jiraData };
 }
 
-export async function getResolvedJiraBugs30Days(jiraProject: string) {
-  const query = `project=${jiraProject}%26issuetype=Bug%26resolved>=-30d&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+export async function getResolvedJiraBugs30Days(
+  jiraProject: string,
+  fixVersion: string
+) {
+  const fixVersionIncluded =
+    fixVersion === "NA" ? "%26resolved>=-30d" : `%26fixVersion="${fixVersion}"`;
+  const query = `project=${jiraProject}%26issuetype=Bug${fixVersionIncluded}&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
   const response = await axios({
     url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
     maxBodyLength: Infinity,
@@ -611,6 +637,332 @@ export async function getJiraBugsOpened(jiraProject: string) {
         : null,
       issueType: element.fields.issuetype.name,
       daysOpened: diffObj.days as number,
+    };
+    jiraData.push(obj);
+  }
+
+  return { totalJiraIssues, jiraData };
+}
+
+export async function getJiraFixVersions(jiraProjectId: string) {
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/project/${jiraProjectId}/versions`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  const versions = response.data
+    .filter((f: any) => f.archived === false)
+    .map((fv: any) => {
+      return {
+        versionId: fv.id,
+        versionName: fv.name,
+        released: fv.released,
+      };
+    });
+  return versions;
+}
+
+export async function getSprintVersions(jiraProjectId: string) {
+  const getSprintData = async (jiraProjectId: string, offset: number = 0) => {
+    const response = await axios({
+      url: `https://${process.env.JIRA_INSTANCE}/rest/agile/1.0/board/${jiraProjectId}/sprint?startAt=${offset}`,
+      maxBodyLength: Infinity,
+      headers: {
+        "content-type": "application/json",
+        Accept: "application/json",
+        Authorization: `Basic ${Buffer.from(
+          process.env.JIRA_CREDENTIALS || "test"
+        ).toString("base64")}`,
+      },
+      timeout: 60000,
+      httpsAgent: new https.Agent({
+        // for self signed
+        rejectUnauthorized: false,
+        // allow legacy server
+        // need this because node 18+ removed legacy server which throws an error
+        secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+      }),
+      method: "GET",
+    });
+
+    const fullSprintData = response.data;
+    return fullSprintData;
+  };
+
+  const getTotals = await getSprintData(jiraProjectId, 0);
+
+  const numberOfLoops = Math.ceil(getTotals.total / 50);
+
+  let offsets = 0;
+  const allSprintData: any = [];
+  for (let index = 0; index < numberOfLoops; index++) {
+    const offsetSprintData = await getSprintData(jiraProjectId, offsets);
+    allSprintData.push(...offsetSprintData.values);
+    offsets += 50;
+  }
+  allSprintData.sort((a: any, b: any) =>
+    b.id > a.id ? 1 : a.id > b.id ? -1 : 0
+  );
+  return allSprintData;
+}
+
+export async function getJiraProjectIdByKey(jiraProjectId: string) {
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/agile/1.0/board`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  const project = response.data.values.filter(
+    (board: any) => board.location.projectKey === jiraProjectId
+  );
+
+  const projectId = project[0].id;
+  return projectId;
+}
+
+export enum TEST_ENVIRONMENT {
+  DEV = "Dev",
+  QA = "QA",
+  STAGING = "Staging",
+  PROD = "Prod",
+  NA = "NA",
+}
+
+export async function getJiraBugsFromSprint(
+  jiraProject: string,
+  sprintStartDate: string,
+  sprintEndDate: string,
+  environment: TEST_ENVIRONMENT
+) {
+  // const fixVersionIncluded =
+  //   fixVersion === "NA" ? "%26created>=-30d" : `%26sprint="${fixVersion}"`;
+  // created >= 2024-02-01 AND created <= 2024-03-03
+  const sprintDates = `%26created>=${sprintStartDate}%26created<=${sprintEndDate}`;
+  const test_env =
+    environment === TEST_ENVIRONMENT.NA
+      ? ""
+      : `%26"Environment[Dropdown]"=${environment}`;
+  // want to get bugs found and resolved between these dates
+  const query = `project=${jiraProject}%26issuetype=Bug%26${sprintDates}${test_env}&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+  // console.log(query);
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  const totalJiraIssues: number = response.data.total;
+
+  let jiraData = [];
+
+  for (let index = 0; index < response.data.issues.length; index++) {
+    const element = response.data.issues[index];
+
+    const obj: JIRA_ISSUE_DATA = {
+      key: element.key,
+      title: element.fields.summary,
+      startDate: element.fields.created,
+      completeDate: element.fields.resolutiondate,
+      severity: element.fields.priority.name,
+      issueLinks: element.fields.issuelinks
+        ? element.fields.issuelinks.map((il: any) => {
+            return {
+              key: il.inwardIssue ? il.inwardIssue.key : il.outwardIssue.key,
+              reason: il.outwardIssue ? il.type.outward : il.type.inward,
+            };
+          })
+        : null,
+      issueType: element.fields.issuetype.name,
+    };
+
+    jiraData.push(obj);
+  }
+
+  return { totalJiraIssues, jiraData };
+}
+
+export async function getJiraStoriesFromSprint(
+  jiraProject: string,
+  sprintId: string
+) {
+  const query = `project=${jiraProject}%26issuetype%20in(Story)%26sprint=${sprintId}&fields=id.key,summary,issuelinks,issuetype&maxResults=100`;
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  const totalJiraIssues: number = response.data.total;
+
+  let jiraData = [];
+
+  for (let index = 0; index < response.data.issues.length; index++) {
+    const element = response.data.issues[index];
+
+    const obj: JIRA_ISSUE_STORY_DATA = {
+      key: element.key,
+      title: element.fields.summary,
+      issueType: element.fields.issuetype.name,
+    };
+    jiraData.push(obj);
+  }
+
+  return { totalJiraIssues, jiraData };
+}
+export async function getJiraStoriesBugsFromSprint(
+  jiraProject: string,
+  sprintId: string
+) {
+  const query = `project=${jiraProject}%26issuetype%20in(Story,Bug)%26sprint=${sprintId}&fields=id.key,summary,issuelinks,issuetype&maxResults=100`;
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  const totalJiraIssues: number = response.data.total;
+
+  let jiraData = [];
+
+  for (let index = 0; index < response.data.issues.length; index++) {
+    const element = response.data.issues[index];
+
+    const obj: JIRA_ISSUE_STORY_DATA = {
+      key: element.key,
+      title: element.fields.summary,
+      issueType: element.fields.issuetype.name,
+    };
+    jiraData.push(obj);
+  }
+
+  return { totalJiraIssues, jiraData };
+}
+
+export async function getResolvedJiraBugsSprint(
+  jiraProject: string,
+  sprintId: string
+) {
+  const query = `project=${jiraProject}%26issuetype=Bug%26sprint=${sprintId}%26status=Done&fields=id.key,summary,created,resolutiondate,priority,issuelinks,issuetype&maxResults=100`;
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  const totalJiraIssues: number = response.data.total;
+
+  let jiraData = [];
+
+  for (let index = 0; index < response.data.issues.length; index++) {
+    const element = response.data.issues[index];
+
+    const obj: JIRA_ISSUE_DATA = {
+      key: element.key,
+      title: element.fields.summary,
+      startDate: element.fields.created,
+      completeDate: element.fields.resolutiondate,
+      severity: element.fields.priority.name,
+      issueLinks: element.fields.issuelinks
+        ? element.fields.issuelinks.map((il: any) => {
+            return {
+              key: il.inwardIssue ? il.inwardIssue.key : il.outwardIssue.key,
+              reason: il.outwardIssue ? il.type.outward : il.type.inward,
+            };
+          })
+        : null,
+      issueType: element.fields.issuetype.name,
     };
     jiraData.push(obj);
   }

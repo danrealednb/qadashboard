@@ -14,7 +14,11 @@ export default function TestTypeCharts() {
 
   return (
     <>
-      <Header testRailProjectId={params.trId} jiraProjectId={params.jId} />
+      <Header
+        testRailProjectId={params.trId}
+        jiraProjectId={params.jId}
+        fixVersionId={params.fv}
+      />
       <h1 className="text-center text-2xl py-5 underline">Test Type Charts</h1>
       <div className="flex justify-center">
         <Form className="grid justify-center space-y-5" method="GET">

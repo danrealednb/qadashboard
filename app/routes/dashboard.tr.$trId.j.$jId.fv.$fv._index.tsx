@@ -59,6 +59,14 @@ export default function Index() {
     defectResolutionTime,
     defectseverityindex,
     jiraDefectsOpen,
+    jiraDefects30DaysFV,
+    jiraDefects30DaysProdFV,
+    jiraDefects30DaysDevFV,
+    testCaseEffectivenessFV,
+    jiraStories30DaysFV,
+    defectDensityFV,
+    defectResolutionTimeFV,
+    defectseverityindexFV,
   } = useLoaderData<typeof loader>();
   // const [params] = useSearchParams();
   const params = useParams();
@@ -69,12 +77,14 @@ export default function Index() {
   // const jiraProjectId = params.get("jiraProject") || "PLAT";
   const testRailProjectId = params.trId;
   const jiraProjectId = params.jId;
+  const fixVersion = params.fv;
 
   return (
     <>
       <Header
         testRailProjectId={testRailProjectId}
         jiraProjectId={jiraProjectId}
+        fixVersionId={fixVersion}
       />
 
       {pageLoading && (
@@ -165,14 +175,14 @@ export default function Index() {
         <div className="grid justify-center text-center space-y-2">
           <label htmlFor="" className="text-xl font-bold">
             <Link
-              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}`}
+              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
             >
               Feature Test Coverage
             </Link>
           </label>
           <label htmlFor="" className="text-blue-700 font-bold">
             <Link
-              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}`}
+              to={`/featurecoverage/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
             >
               Click to learn more
             </Link>
@@ -219,9 +229,9 @@ export default function Index() {
           <Await resolve={jiraStories30Days}>
             {(jiraStories30Days) => (
               <CountVisualWithLink
-                chartName="Total Stories Completed"
+                chartName="Resolved Stories + Bugs (30 Days)"
                 count={jiraStories30Days.totalJiraIssues}
-                page={`/stories/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                page={`/stories/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -235,7 +245,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defects (30 Days)"
                 count={jiraDefects30Days.totalJiraIssues}
-                page={`/defects30all/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                page={`/defects30all/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -247,7 +257,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defects Prod (30 Days) (Defect Leakage)"
                 count={jiraDefects30DaysProd.totalJiraIssues}
-                page={`/defects30prod/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                page={`/defects30prod/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -259,7 +269,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defects Dev (30 Days)"
                 count={jiraDefects30DaysDev.totalJiraIssues}
-                page={`/defects30dev/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                page={`/defects30dev/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -271,7 +281,7 @@ export default function Index() {
               <CountVisualWithLink
                 chartName="Defect Severity Index"
                 count={parseFloat(defectseverityindex)}
-                page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/t`}
               />
             )}
           </Await>
@@ -282,13 +292,121 @@ export default function Index() {
             {(jiraDefectsOpen) => (
               <CountVisualWithLink
                 chartName="Open Bugs"
-                count={parseFloat(jiraDefectsOpen.totalJiraIssues)}
-                page={`/defects/open/tr/${testRailProjectId}/j/${jiraProjectId}`}
+                count={jiraDefectsOpen.totalJiraIssues}
+                page={`/defects/open/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}`}
               />
             )}
           </Await>
         </Suspense>
       </div>
+      {fixVersion !== "NA" && (
+        <>
+          <div className="flex justify-center text-2xl underline">
+            <h2 className="text-center font-bold text-blue-600 pb-10">
+              Release {fixVersion}
+            </h2>
+          </div>
+          <div className="grid grid-cols-4 gap-5">
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={defectDensityFV}>
+                {(defectDensityFV) => (
+                  <CountVisualWithTooltip
+                    chartName="Defect Density"
+                    count={parseFloat(defectDensityFV)}
+                    tooltip="Number of defects divided by number of stories"
+                  />
+                )}
+              </Await>
+            </Suspense>
+
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={defectResolutionTimeFV}>
+                {(defectResolutionTimeFV) => (
+                  <CountVisualWithTooltip
+                    chartName="Defect Resolution Time (Days)"
+                    count={parseFloat(defectResolutionTimeFV?.toFixed(2)) || 0}
+                    tooltip="Defect closure date minus defect creation date. Average number of days taken to fix bugs"
+                  />
+                )}
+              </Await>
+            </Suspense>
+
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={testCaseEffectivenessFV}>
+                {(testCaseEffectivenessFV) => (
+                  <CountVisualWithTooltip
+                    chartName="Test Case Effectiveness"
+                    count={parseFloat(testCaseEffectivenessFV)}
+                    tooltip="Number of defects found divided by number of test cases executed"
+                  />
+                )}
+              </Await>
+            </Suspense>
+
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={jiraStories30DaysFV}>
+                {(jiraStories30DaysFV) => (
+                  <CountVisualWithLink
+                    chartName="Resolved Stories + Bugs"
+                    count={jiraStories30DaysFV.totalJiraIssues}
+                    page={`/stories/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
+                  />
+                )}
+              </Await>
+            </Suspense>
+          </div>
+
+          <div className="grid grid-cols-4 gap-12 py-20">
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={jiraDefects30DaysFV}>
+                {(jiraDefects30DaysFV) => (
+                  <CountVisualWithLink
+                    chartName="Defects"
+                    count={jiraDefects30DaysFV.totalJiraIssues}
+                    page={`/defects30all/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
+                  />
+                )}
+              </Await>
+            </Suspense>
+
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={jiraDefects30DaysProdFV}>
+                {(jiraDefects30DaysProdFV) => (
+                  <CountVisualWithLink
+                    chartName="Defects Prod (Defect Leakage)"
+                    count={jiraDefects30DaysProdFV.totalJiraIssues}
+                    page={`/defects30prod/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
+                  />
+                )}
+              </Await>
+            </Suspense>
+
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={jiraDefects30DaysDevFV}>
+                {(jiraDefects30DaysDevFV) => (
+                  <CountVisualWithLink
+                    chartName="Defects QA"
+                    count={jiraDefects30DaysDevFV.totalJiraIssues}
+                    page={`/defects30dev/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
+                  />
+                )}
+              </Await>
+            </Suspense>
+
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={defectseverityindexFV}>
+                {(defectseverityindexFV) => (
+                  <CountVisualWithLink
+                    chartName="Defect Severity Index"
+                    count={parseFloat(defectseverityindexFV)}
+                    page={`/defectseverityindex/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersion}/f`}
+                  />
+                )}
+              </Await>
+            </Suspense>
+          </div>
+        </>
+      )}
     </>
   );
 }
@@ -307,18 +425,24 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const selectedTestRailProject = params.trId;
   const selectedJiraProject = params.jId;
+  const fixVersion = params.fv;
 
   const testRuns = getCurrentTestRuns(selectedTestRailProject);
 
   const totalTestsExecuted = getTotalTestsExecuted(testRuns);
 
-  const jiraDefects30Days = getJiraBugs30Days(selectedJiraProject);
-  const jiraDefects30DaysProd = getJiraBugs30DaysProd(selectedJiraProject);
-  const jiraDefects30DaysDev = getJiraBugs30DaysDev(selectedJiraProject);
-  const jiraStories30Days = getJiraStories30Days(selectedJiraProject);
+  const jiraDefects30Days = getJiraBugs30Days(selectedJiraProject, "NA");
+  const jiraDefects30DaysProd = getJiraBugs30DaysProd(
+    selectedJiraProject,
+    "NA"
+  );
+  const jiraDefects30DaysDev = getJiraBugs30DaysDev(selectedJiraProject, "NA");
+  const jiraStories30Days = getJiraStories30Days(selectedJiraProject, "NA");
 
-  const jiraDefectsResolved30Days =
-    getResolvedJiraBugs30Days(selectedJiraProject);
+  const jiraDefectsResolved30Days = getResolvedJiraBugs30Days(
+    selectedJiraProject,
+    "NA"
+  );
 
   const testCaseEffectiveness = getTestCaseEffectiveness(
     jiraDefects30Days,
@@ -333,7 +457,48 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 
   const defectseverityindex = getDefectSeverityIndex(jiraDefects30Days);
 
-  const jiraDefectsOpen = getJiraBugsOpened(selectedJiraProject);
+  const jiraDefectsOpen = getJiraBugsOpened(selectedJiraProject, "NA");
+
+  // fix version
+  const jiraDefects30DaysFV =
+    fixVersion === "NA"
+      ? null
+      : getJiraBugs30Days(selectedJiraProject, fixVersion);
+  const jiraDefects30DaysProdFV =
+    fixVersion === "NA"
+      ? null
+      : getJiraBugs30DaysProd(selectedJiraProject, fixVersion);
+  const jiraDefects30DaysDevFV =
+    fixVersion === "NA"
+      ? null
+      : getJiraBugs30DaysDev(selectedJiraProject, fixVersion);
+  const jiraStories30DaysFV =
+    fixVersion === "NA"
+      ? null
+      : getJiraStories30Days(selectedJiraProject, fixVersion);
+
+  const jiraDefectsResolved30DaysFV =
+    fixVersion === "NA"
+      ? null
+      : getResolvedJiraBugs30Days(selectedJiraProject, fixVersion);
+
+  const testCaseEffectivenessFV =
+    fixVersion === "NA"
+      ? null
+      : getTestCaseEffectiveness(jiraDefects30DaysFV, totalTestsExecuted);
+
+  const defectDensityFV =
+    fixVersion === "NA"
+      ? null
+      : getDefectDensity(jiraDefects30DaysFV, jiraStories30DaysFV);
+
+  const defectResolutionTimeFV =
+    fixVersion === "NA"
+      ? null
+      : getJiraDefectResolutionTime(jiraDefectsResolved30DaysFV);
+
+  const defectseverityindexFV =
+    fixVersion === "NA" ? null : getDefectSeverityIndex(jiraDefects30DaysFV);
 
   return defer({
     testRuns,
@@ -346,5 +511,14 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     defectResolutionTime,
     defectseverityindex,
     jiraDefectsOpen,
+
+    jiraDefects30DaysFV,
+    jiraDefects30DaysProdFV,
+    jiraDefects30DaysDevFV,
+    testCaseEffectivenessFV,
+    jiraStories30DaysFV,
+    defectDensityFV,
+    defectResolutionTimeFV,
+    defectseverityindexFV,
   });
 }

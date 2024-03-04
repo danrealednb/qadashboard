@@ -2,6 +2,7 @@ import { eq, and } from "drizzle-orm";
 import { db } from "~/data/config.server";
 import { tests } from "~/data/schema.tests.server";
 import { bugs } from "~/data/schema.bugs.server";
+import { release_bugs } from "./schema.release.bugs.server";
 
 export const testTypeMappingDB = (testType: string) => {
   switch (testType) {
@@ -83,6 +84,15 @@ export async function getBugMetrics(
         eq(bugs.year, year)
       )
     )
+    .all();
+  return metrics;
+}
+
+export async function getReleaseBugMetrics(jiraProjectId: string) {
+  const metrics = db
+    .select()
+    .from(release_bugs)
+    .where(and(eq(release_bugs.jira_project_id, jiraProjectId)))
     .all();
   return metrics;
 }
