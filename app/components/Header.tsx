@@ -44,6 +44,15 @@ export default function Header({
                 Breakdowns
               </Link>
             </li>
+            <li key={3}>
+              <Link
+                to={`/sprint/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
+                className="underline"
+                data-testid="sprintLink"
+              >
+                Sprint
+              </Link>
+            </li>
           </ul>
         </nav>
         <nav className="flex justify-center items-center text-center  pb-2 pt-2">
