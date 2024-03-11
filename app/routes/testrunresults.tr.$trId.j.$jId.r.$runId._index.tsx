@@ -8,7 +8,7 @@ import {
 } from "~/data/testrail.server";
 
 export default function TestRunResults() {
-  const { testRunData } = useLoaderData<typeof loader>();
+  const { testRunData, counts } = useLoaderData<typeof loader>();
   const params = useParams();
   return (
     <>
@@ -21,7 +21,7 @@ export default function TestRunResults() {
       <h2 className="text-center text-2xl pb-5 text-blue-500">
         {testRunData.length}
       </h2>
-      <TestRunTestList testCases={testRunData} />
+      <TestRunTestList testCases={testRunData} counts={counts} />
     </>
   );
 }
@@ -32,9 +32,16 @@ export async function loader({ params }: LoaderFunctionArgs) {
   //   const data = await getJiraBugs30Days();
 
   const data = await getTestsInTestRun(testRailProjectId, 0, runId!!);
-  //   console.log(data);
 
   const testRunData = strippedDownTestRunData(data);
 
-  return { testRunData };
+  const counts = {
+    passed: testRunData.filter((run) => run.status === "Passed").length,
+    failed: testRunData.filter((run) => run.status === "Failed").length,
+    blocked: testRunData.filter((run) => run.status === "Blocked").length,
+    retest: testRunData.filter((run) => run.status === "Retest").length,
+    untested: testRunData.filter((run) => run.status === "Untested").length,
+  };
+
+  return { testRunData, counts };
 }

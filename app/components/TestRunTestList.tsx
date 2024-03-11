@@ -3,8 +3,16 @@ import { testTypeMapping } from "../utils/testTypes";
 
 export default function TestRunTestList({
   testCases,
+  counts,
 }: {
   testCases: Array<TEST_CASE_RESULT>;
+  counts: {
+    passed: number;
+    failed: number;
+    blocked: number;
+    retest: number;
+    untested: number;
+  };
 }) {
   const getTestTypesToStr = (testTypes: Array<number>) => {
     const mappedTypes = testTypes.map((test: number) => (
@@ -31,6 +39,28 @@ export default function TestRunTestList({
 
   return (
     <>
+      <div className="grid justify-center px-4 pb-4 text-pretty">
+        <div className="flex">
+          <label htmlFor="">Passed: </label>
+          <p className="text-green-600 font-bold"> {counts.passed}</p>
+        </div>
+        <div className="flex">
+          <label htmlFor="">Failed: </label>
+          <p className="text-red-600 font-bold"> {counts.failed}</p>
+        </div>
+        <div className="flex">
+          <label htmlFor="">Blocked: </label>
+          <p className="text-purple-600 font-bold"> {counts.blocked}</p>
+        </div>
+        <div className="flex">
+          <label htmlFor="">Retest: </label>
+          <p className="text-yellow-600 font-bold"> {counts.retest}</p>
+        </div>
+        <div className="flex">
+          <label htmlFor="">Untested: </label>
+          <p className="text-gray-600 font-bold"> {counts.untested}</p>
+        </div>
+      </div>
       <div className="flex justify-center px-4 pb-4 text-pretty">
         <table className="">
           <thead>

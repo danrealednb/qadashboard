@@ -25,6 +25,7 @@ import {
   getJiraBugs30DaysProd,
   getJiraBugsOpened,
   getJiraDefectResolutionTime,
+  getJiraFixVersions,
   getJiraProjects,
   getJiraStories30Days,
   getResolvedJiraBugs30Days,
@@ -32,6 +33,7 @@ import {
 } from "~/data/jira.server";
 import {
   getCurrentTestRuns,
+  getReleaseTestRuns,
   getTestRailProjects,
   getTotalTestsExecuted,
   TEST_RUN_DATA,
@@ -67,6 +69,7 @@ export default function Index() {
     defectDensityFV,
     defectResolutionTimeFV,
     defectseverityindexFV,
+    releaseTestRuns,
   } = useLoaderData<typeof loader>();
   // const [params] = useSearchParams();
   const params = useParams();
@@ -306,6 +309,29 @@ export default function Index() {
               Release {fixVersion}
             </h2>
           </div>
+          <div className="grid grid-cols-4 gap-4">
+            <Suspense fallback={<p>Loading Data.......</p>}>
+              <Await resolve={releaseTestRuns}>
+                {(releaseTestRuns) => (
+                  <>
+                    {releaseTestRuns.map((run: TEST_RUN_DATA) => (
+                      <StarbasePieChart
+                        chartName={run.name!!}
+                        passed={run.passed}
+                        failed={run.failed}
+                        blocked={run.blocked}
+                        retest={run.retest}
+                        untested={run.untested}
+                        testRunId={run.id}
+                        testRailProjectId={testRailProjectId}
+                        jiraProjectId={jiraProjectId}
+                      />
+                    ))}
+                  </>
+                )}
+              </Await>
+            </Suspense>
+          </div>
           <div className="grid grid-cols-4 gap-5">
             <Suspense fallback={<p>Loading Data.......</p>}>
               <Await resolve={defectDensityFV}>
@@ -500,6 +526,18 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const defectseverityindexFV =
     fixVersion === "NA" ? null : getDefectSeverityIndex(jiraDefects30DaysFV);
 
+  //filter fix version by name to get the fix version jira reference id
+  const releaseVersions = await getJiraFixVersions(selectedJiraProject);
+
+  const [dan] = releaseVersions.filter(
+    (rv: any) => rv.versionName === fixVersion
+  );
+
+  const releaseTestRuns =
+    fixVersion === "NA"
+      ? null
+      : getReleaseTestRuns(selectedTestRailProject, dan.versionId);
+
   return defer({
     testRuns,
     jiraDefects30Days,
@@ -520,5 +558,6 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     defectDensityFV,
     defectResolutionTimeFV,
     defectseverityindexFV,
+    releaseTestRuns,
   });
 }

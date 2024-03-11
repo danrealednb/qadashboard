@@ -596,3 +596,85 @@ export async function getTestRailProjects() {
 
   return data;
 }
+
+export async function getTestRailMilestones(projectId: string) {
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_milestones/${projectId}`,
+    { headers }
+  );
+  const data = await res.json();
+  const milestones = await data.milestones;
+
+  return milestones;
+}
+
+export async function getSprintTestRuns(
+  projectId: string,
+  milestoneId: string
+) {
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_runs/${projectId}&milestone_id=${milestoneId}`,
+    { headers }
+  );
+  const data = await res.json();
+
+  const testRailData = data.runs;
+
+  let testRunData = [];
+
+  for (let index = 0; index < testRailData.length; index++) {
+    const element = testRailData[index];
+
+    const obj: TEST_RUN_DATA = {
+      passed: element.passed_count,
+      failed: element.failed_count,
+      retest: element.retest_count,
+      blocked: element.blocked_count,
+      untested: element.untested_count,
+      name: element.name,
+      id: element.id,
+    };
+    testRunData.push(obj);
+  }
+  return testRunData;
+}
+
+export async function getReleaseTestRuns(
+  projectId: string,
+  jiraReferenceId: string
+) {
+  const headers = {
+    Authorization: `Basic ${process.env.TEST_RAIL_API_KEY}`,
+  };
+  const res = await fetch(
+    `https://${process.env.TEST_RAIL_INSTANCE}/index.php?/api/v2/get_runs/${projectId}&refs=${jiraReferenceId}`,
+    { headers }
+  );
+  const data = await res.json();
+
+  const testRailData = data.runs;
+
+  let testRunData = [];
+
+  for (let index = 0; index < testRailData.length; index++) {
+    const element = testRailData[index];
+
+    const obj: TEST_RUN_DATA = {
+      passed: element.passed_count,
+      failed: element.failed_count,
+      retest: element.retest_count,
+      blocked: element.blocked_count,
+      untested: element.untested_count,
+      name: element.name,
+      id: element.id,
+    };
+    testRunData.push(obj);
+  }
+  return testRunData;
+}

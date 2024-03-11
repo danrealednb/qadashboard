@@ -28,14 +28,18 @@ import JiraList from "~/components/JiraList";
 import {
   TEST_CASE_STR,
   TEST_COVERAGE,
+  TEST_RUN_DATA,
   getCurrentTestRuns,
   getJiraRefTestsV3,
+  getSprintTestRuns,
   getTestCasesFromTestRailV2,
+  getTestRailMilestones,
   getTotalTestsExecuted,
 } from "~/data/testrail.server";
+import StarbasePieChart from "~/components/StarbasePieChart";
 
 export default function SprintPage() {
-  const { sprintData } = useLoaderData<typeof loader>();
+  const { sprintData, milestones } = useLoaderData<typeof loader>();
   const params = useParams();
   const data = useActionData<typeof action>();
   const [sprintDates, setSprintDates] = useState({
@@ -73,6 +77,9 @@ export default function SprintPage() {
           method="POST"
           className="grid justify-center items-center text-center space-y-5"
         >
+          <label htmlFor="" className="font-bold">
+            Jira Sprint
+          </label>
           <select
             name="sprint"
             id="sprint"
@@ -86,17 +93,34 @@ export default function SprintPage() {
               </option>
             ))}
           </select>
+          <label htmlFor="" className="font-bold">
+            Test Rail Milestone
+          </label>
+          <select
+            name="milestone_id"
+            id="milestone_id"
+            data-testid="milestone_id"
+            className="border-blue-600 border-2 rounded-full px-2 py-1"
+          >
+            {milestones.map((milestone: any) => (
+              <option key={milestone.id} value={milestone.id}>
+                {milestone.name}
+              </option>
+            ))}
+          </select>
 
           <input type="hidden" name="startDate" value={sprintDates.startDate} />
           <input type="hidden" name="endDate" value={sprintDates.endDate} />
 
-          <button
-            type="submit"
-            value="Submit"
-            className="border-4 border-red-600 rounded-full px-2 py-1"
-          >
-            View Sprint Data
-          </button>
+          <div className="py-5">
+            <button
+              type="submit"
+              value="Submit"
+              className="border-4 border-red-600 rounded-full px-2 py-1"
+            >
+              View Sprint Data
+            </button>
+          </div>
         </Form>
       </div>
 
@@ -107,6 +131,25 @@ export default function SprintPage() {
       )}
 
       <div className="py-5">
+        <h2 className="text-center text-2xl font-semibold py-2 underline">
+          Sprint Test Results
+        </h2>
+        <div className="grid grid-cols-4 gap-4">
+          {data?.sprintTestRuns.map((run: TEST_RUN_DATA) => (
+            <StarbasePieChart
+              chartName={run.name!!}
+              passed={run.passed}
+              failed={run.failed}
+              blocked={run.blocked}
+              retest={run.retest}
+              untested={run.untested}
+              testRunId={run.id}
+              testRailProjectId={params.trId}
+              jiraProjectId={params.jId}
+            />
+          ))}
+        </div>
+
         <h2 className="text-center text-2xl font-semibold py-2 underline">
           Total Sprint Bugs
         </h2>
@@ -321,6 +364,9 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   const sprintData = await getSprintVersions(jiraProjectId);
   // console.log("sprint data", sprintData);
 
+  // milestones
+  const milestones = await getTestRailMilestones(params.trId!!);
+
   // return defer({
   //   jiraProjects,
   //   testRailProjects,
@@ -337,7 +383,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   // ];
   // return null;
   // const sprintData = ["1"];
-  return { sprintData };
+  return { sprintData, milestones };
 }
 
 export async function action({ request, params }: ActionFunctionArgs) {
@@ -424,6 +470,12 @@ export async function action({ request, params }: ActionFunctionArgs) {
     totalSprintBugs,
     totalTestsExecuted
   );
+
+  // charts
+  const sprintTestRuns = await getSprintTestRuns(
+    selectedTestRailProject,
+    vals.milestone_id.toString()
+  );
   // console.log("test case effectiveness", testCaseEffectiveness);
 
   return {
@@ -435,5 +487,6 @@ export async function action({ request, params }: ActionFunctionArgs) {
     defectResoltionTimeFormatted,
     jiraStoriesBugsFromSprint,
     testCoverage,
+    sprintTestRuns,
   };
 }
