@@ -29,6 +29,15 @@ export interface JIRA_ISSUE_STORY_DATA {
   title: string;
   issueType: string;
 }
+export interface JIRA_SPRINT_TEAM_DATA {
+  key: string;
+  title: string;
+  issueType: string;
+  qa_assignee: string;
+  qa_points: number;
+  assignee: string;
+  story_points: number;
+}
 
 export interface JIRA_ISSUE_FEATURE_DATA {
   key: string;
@@ -968,4 +977,104 @@ export async function getResolvedJiraBugsSprint(
   }
 
   return { totalJiraIssues, jiraData };
+}
+
+export async function getSprintTeamData(jiraProject: string, sprintId: string) {
+  const query = `project=${jiraProject}%26sprint=${sprintId}&fields=id.key,summary,issuetype,customfield_10251,customfield_10249,assignee,customfield_10074&maxResults=100`;
+  const response = await axios({
+    url: `https://${process.env.JIRA_INSTANCE}/rest/api/2/search?jql=${query}`,
+    maxBodyLength: Infinity,
+    headers: {
+      "content-type": "application/json",
+      Accept: "application/json",
+      Authorization: `Basic ${Buffer.from(
+        process.env.JIRA_CREDENTIALS || "test"
+      ).toString("base64")}`,
+    },
+    timeout: 60000,
+    httpsAgent: new https.Agent({
+      // for self signed
+      rejectUnauthorized: false,
+      // allow legacy server
+      // need this because node 18+ removed legacy server which throws an error
+      secureOptions: crypto.constants.SSL_OP_LEGACY_SERVER_CONNECT,
+    }),
+    method: "GET",
+  });
+
+  // return response.data;
+
+  const totalJiraIssues: number = response.data.total;
+
+  let jiraData = [];
+
+  for (let index = 0; index < response.data.issues.length; index++) {
+    const element = response.data.issues[index];
+
+    const obj: JIRA_SPRINT_TEAM_DATA = {
+      key: element.key,
+      title: element.fields.summary,
+      issueType: element.fields.issuetype.name,
+      qa_assignee: element.fields.customfield_10249?.displayName || "NA",
+      qa_points: parseInt(element.fields.customfield_10251?.value) || 0,
+      assignee: element.fields.assignee?.displayName || "NA",
+      story_points: Math.round(element.fields.customfield_10074) || 0,
+    };
+    jiraData.push(obj);
+  }
+
+  const team = [
+    "Daniel Reale",
+    "James Wu",
+    "Sage Lane",
+    "Yong Choi",
+    "Paine Leffler",
+    "Jason Kovacs",
+    "Edward Dunne",
+    "Kofi Boadu",
+    "Justin Hollabaugh",
+  ];
+
+  const teamMemberData = (person: string) => {
+    const filterAssigned = jiraData.filter((j) => j.assignee === person);
+    const assignedPoints = filterAssigned.reduce(
+      (accumulator, current) => accumulator + current.story_points,
+      0
+    );
+    const filterQAAssigned = jiraData.filter((j) => j.qa_assignee === person);
+    const qaPoints = filterQAAssigned.reduce(
+      (accumulator, current) => accumulator + current.qa_points,
+      0
+    );
+    return {
+      person: person,
+      // dev: filterAssigned,
+      story_points: assignedPoints,
+      // qa: filterQAAssigned,
+      qa_points: qaPoints,
+    };
+  };
+
+  let teamPoints = [];
+  for (let index = 0; index < team.length; index++) {
+    const element = team[index];
+    const memberData = teamMemberData(element);
+    teamPoints.push(memberData);
+  }
+  const totalStoryPoints = jiraData.reduce(
+    (accumulator, current) => accumulator + current.story_points,
+    0
+  );
+  const totalQAPoints = jiraData.reduce(
+    (accumulator, current) => accumulator + current.qa_points,
+    0
+  );
+
+  return {
+    totalJiraIssues,
+    jiraData,
+    teamPoints,
+    totalStoryPoints,
+    totalQAPoints,
+  };
 }

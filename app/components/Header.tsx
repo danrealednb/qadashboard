@@ -53,6 +53,15 @@ export default function Header({
                 Sprint
               </Link>
             </li>
+            <li key={4}>
+              <Link
+                to={`/team/tr/${testRailProjectId}/j/${jiraProjectId}/fv/${fixVersionId}`}
+                className="underline"
+                data-testid="teamtLink"
+              >
+                Team
+              </Link>
+            </li>
           </ul>
         </nav>
         <nav className="flex justify-center items-center text-center  pb-2 pt-2">

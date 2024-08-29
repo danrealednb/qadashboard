@@ -47,6 +47,8 @@ export default function StarbasePieChart({
     { name: "Retest", value: retest },
     { name: "Untested", value: untested },
   ];
+  const cn =
+    chartName.length > 30 ? chartName.substring(0, 30 - 3) + "..." : chartName;
 
   return (
     <>
@@ -80,7 +82,7 @@ export default function StarbasePieChart({
               <Link
                 to={`/testrunresults/tr/${testRailProjectId}/j/${jiraProjectId}/r/${testRunId}`}
               >
-                {chartName}
+                {cn}
               </Link>
             </tspan>
           </text>
