@@ -1018,7 +1018,7 @@ export async function getSprintTeamData(jiraProject: string, sprintId: string) {
       qa_assignee: element.fields.customfield_10249?.displayName || "NA",
       qa_points: parseInt(element.fields.customfield_10251?.value) || 0,
       assignee: element.fields.assignee?.displayName || "NA",
-      story_points: Math.round(element.fields.customfield_10074) || 0,
+      story_points: element.fields.customfield_10074 || 0,
     };
     jiraData.push(obj);
   }
@@ -1070,9 +1070,13 @@ export async function getSprintTeamData(jiraProject: string, sprintId: string) {
     0
   );
 
+  const sortedJiraData = jiraData.sort((a, b) =>
+    a.assignee.localeCompare(b.assignee)
+  );
+
   return {
     totalJiraIssues,
-    jiraData,
+    jiraData: sortedJiraData,
     teamPoints,
     totalStoryPoints,
     totalQAPoints,

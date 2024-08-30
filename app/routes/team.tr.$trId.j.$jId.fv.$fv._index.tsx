@@ -11,6 +11,7 @@ import { useState } from "react";
 import CountPercentageVisual from "~/components/CountPercentageVisual";
 import CountVisual from "~/components/CountVisual";
 import Header from "~/components/Header";
+import JiraPointsList from "~/components/JiraPointsList";
 import {
   getJiraProjectIdByKey,
   getSprintTeamData,
@@ -122,6 +123,7 @@ export default function Team() {
               ))}
             </ul>
           </div>
+          <JiraPointsList jiraData={data.jiraData} />
         </>
       )}
     </>
@@ -145,12 +147,9 @@ export async function action({ request, params }: ActionFunctionArgs) {
   const formData = await request.formData();
   const vals = Object.fromEntries(formData);
 
-  console.log(vals);
-
   const teamData = await getSprintTeamData(
     selectedJiraProject!!,
     vals.sprint.toString()
   );
-  //   console.log("TD", teamData);
   return teamData;
 }
